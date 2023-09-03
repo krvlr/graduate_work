@@ -41,8 +41,6 @@ def create_app():
 
     Swagger(app, template=template, config=swagger_config)
 
-    app.config["SECRET_KEY"] = common_settings.secret_key
-
     app.config.update(
         {
             "JWT_COOKIE_SECURE": jwt_settings.cookie_secure,

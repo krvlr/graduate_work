@@ -36,7 +36,7 @@ async def shutdown():
 
 
 app.include_router(ugc.router, prefix="/api/v1/ugc", tags=["ugc"])
-app.include_router(core.router, prefix="/api/v1", tags=["core"])
+app.include_router(core.router, prefix="/api/v1/ugc", tags=["core"])
 
 
 if __name__ == "__main__":

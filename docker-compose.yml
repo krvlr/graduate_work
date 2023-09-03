@@ -157,6 +157,11 @@ services:
       dockerfile: Dockerfile
     container_name: api-movies
     restart: always
+    healthcheck:
+          test: "curl -H 'X-Request-Id: ${MOVIES_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/movies/health || exit 1"
+          interval: 10s
+          timeout: 10s
+          retries: 3
     depends_on:
       db-movies:
         condition: service_healthy
@@ -437,7 +442,7 @@ services:
     container_name: api-ugc
     restart: always
     healthcheck:
-      test: "curl -H 'X-Request-Id: ${AUTH_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/health || exit 1"
+      test: "curl -H 'X-Request-Id: ${UGC_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/ugc/health || exit 1"
       interval: 10s
       timeout: 10s
       retries: 3
@@ -593,7 +598,7 @@ services:
       db-movies:
         condition: service_healthy
     healthcheck:
-      test: "curl -H 'X-Request-Id: ${AUTH_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/health || exit 1"
+      test: "curl -H 'X-Request-Id: ${UGC_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/ugc2/health || exit 1"
       interval: 10s
       timeout: 10s
       retries: 3

@@ -20,7 +20,6 @@ class LoggerSettings(BaseConfig):
 
 
 class CommonSettings(BaseConfig):
-    secret_key: str = Field(repr=False, env="FLASK_SECRET_KEY")
     debug: bool = Field(default=True, env="DEBUG")
     host: str = Field(default="0.0.0.0")
     port: str = Field(default="8000")

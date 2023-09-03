@@ -40,10 +40,10 @@ async def shutdown():
     await elastic.es.close()
 
 
-app.include_router(films.router, prefix="/api/v1/films", tags=["films"])
-app.include_router(genres.router, prefix="/api/v1/genres", tags=["genres"])
-app.include_router(persons.router, prefix="/api/v1/persons", tags=["persons"])
-app.include_router(core.router, prefix="/api/v1", tags=["core"])
+app.include_router(films.router, prefix="/api/v1/movies/films", tags=["films"])
+app.include_router(genres.router, prefix="/api/v1/movies/genres", tags=["genres"])
+app.include_router(persons.router, prefix="/api/v1/movies/persons", tags=["persons"])
+app.include_router(core.router, prefix="/api/v1/movies", tags=["core"])
 
 
 if __name__ == "__main__":
