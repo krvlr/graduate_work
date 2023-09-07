@@ -1,6 +1,5 @@
 import uvicorn
 from api.v1 import films, genres, persons, core
-from core import config
 from core.config import (
     jaeger_settings,
     base_settings,
@@ -20,8 +19,8 @@ from db import elastic, redis
 
 app = FastAPI(
     title=base_settings.project_name,
-    docs_url="/api/openapi",
-    openapi_url="/api/openapi.json",
+    docs_url="/api/movies/openapi",
+    openapi_url="/api/movies/openapi.json",
     default_response_class=ORJSONResponse,
 )
 

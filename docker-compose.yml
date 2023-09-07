@@ -16,11 +16,13 @@ volumes:
   mongo_config2:
   mongo_config3:
   jaeger_volume:
+  user_profile_postgres_data:
 
 networks:
   movies_network:
   auth_network:
   ugc_network:
+  user_profile_network:
 
 services:
   db-auth:
@@ -453,7 +455,6 @@ services:
     expose:
       - "8000"
 
-
   mongors1n1:
     container_name: mongors1n1
     image: mongo
@@ -628,6 +629,47 @@ services:
       - "6831:6831/udp"
       - "16686:16686"
 
+  db-user-profile:
+    image: postgres:13-alpine
+    container_name: db-user-profile
+    restart: always
+    environment:
+      POSTGRES_DB: ${USER_PROFILE_DB_NAME}
+      POSTGRES_USER: ${USER_PROFILE_DB_USER}
+      POSTGRES_PASSWORD: ${USER_PROFILE_DB_PASSWORD}
+    volumes:
+      - user_profile_postgres_data:/var/lib/postgresql/data/
+    networks:
+      - user_profile_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $$USER_PROFILE_POSTGRES_DB -U $$USER_PROFILE_POSTGRES_USER" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    expose:
+      - "5432"
+
+  api-user-profile:
+    build:
+      context: ./user_profile
+      dockerfile: Dockerfile
+    container_name: api-user-profile
+    restart: always
+    healthcheck:
+      test: "curl -H 'X-Request-Id: ${USER_PROFILE_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/user_profile/health || exit 1"
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      db-user-profile:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - user_profile_network
+    expose:
+      - "8000"
+
   nginx:
     image: nginx:1.23.1-alpine
     container_name: nginx-movies
@@ -641,6 +683,8 @@ services:
         condition: service_healthy
       api-movies:
         condition: service_healthy
+      api-user-profile:
+        condition: service_healthy
       api-ugc:
         condition: service_healthy
       api-ugc2:
@@ -649,5 +693,6 @@ services:
       - movies_network
       - auth_network
       - ugc_network
+      - user_profile_network
     ports:
       - "80:80"
