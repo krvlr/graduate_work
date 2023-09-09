@@ -36,3 +36,22 @@ class UserProfileUpdateSchemaRequest(BaseModel):
 
 class UserProfileUpdateSchemaResponse(BaseModel):
     user_id: UUID
+
+
+class GenreSchema(BaseModel):
+    genre_id: UUID
+    name: str
+
+
+class GenreSchemaRequest(BaseModel):
+    genre_id: UUID
+    name: str
+
+
+class GenreSchemaResponse(BaseModel):
+    genre_id: UUID
+    user_id: UUID
+
+
+class UserGenreRegisterSchemaRequest(BaseModel):
+    name: str

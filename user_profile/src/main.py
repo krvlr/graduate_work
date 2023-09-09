@@ -1,4 +1,4 @@
-import logging
+import logging.config
 
 import uvicorn
 from api.v1 import core, user_profile
@@ -25,7 +25,7 @@ app = FastAPI(
 )
 
 
-# configure_jaeger_tracer(app, jaeger_settings.host, jaeger_settings.port)
+configure_jaeger_tracer(app, jaeger_settings.host, jaeger_settings.port)
 
 
 @app.on_event("startup")
