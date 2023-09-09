@@ -1,7 +1,7 @@
 from db import Base
 from uuid import uuid4, UUID
 from sqlalchemy import func, ForeignKey
-from datetime import datetime
+from datetime import datetime, date
 from sqlalchemy.orm import Mapped, WriteOnlyMapped, mapped_column, relationship
 from models.user_profile import UserProfileSchema, GenreSchema
 
@@ -23,7 +23,7 @@ class UserProfile(Base):
         onupdate=func.now(),
         nullable=False,
     )
-    age: Mapped[int] = mapped_column(comment="Возраст пользователя")
+    age: Mapped[date] = mapped_column(comment="Дата рождения пользователя")
     first_name: Mapped[str] = mapped_column(comment="Имя пользователя")
     last_name: Mapped[str] = mapped_column(comment="Второе имя пользователя")
     country: Mapped[str] = mapped_column(comment="Страна пользователя")

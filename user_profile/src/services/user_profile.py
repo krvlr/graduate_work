@@ -2,72 +2,71 @@ from functools import lru_cache
 from models.user_profile import UserProfileRegisterSchemaRequest
 from uuid import UUID
 from utils.unitofwork import IUnitOfWork
-from sqlalchemy.exc import NoResultFound
 
 
 class UserProfileService:
     @staticmethod
     async def add_user_genre(
-        uow: IUnitOfWork,
+        unit_of_work: IUnitOfWork,
         user_id: UUID,
         user_preference: UserProfileRegisterSchemaRequest,
     ) -> tuple:
-        async with uow:
-            await uow.user_profile.read(id=user_id)
+        async with unit_of_work:
+            await unit_of_work.user_profile.read(id=user_id)
 
             try:
-                genre = await uow.genre.read(name=user_preference.name)
+                genre = await unit_of_work.genre.read(name=user_preference.name)
                 genre_id = genre.genre_id
             except Exception:
-                genre_id = await uow.genre.create(data=user_preference.dict())
+                genre_id = await unit_of_work.genre.create(data=user_preference.dict())
 
-            await uow.user_profile_genre.create(data={"user_id": user_id, "genre_id": genre_id})
-            await uow.commit()
+            await unit_of_work.user_profile_genre.create(data={"user_id": user_id, "genre_id": genre_id})
+            await unit_of_work.commit()
         return user_id, genre_id
 
     @staticmethod
     async def add_user(
-        uow: IUnitOfWork,
+        unit_of_work: IUnitOfWork,
         user_id: UUID,
         user_profile: UserProfileRegisterSchemaRequest,
     ) -> UUID:
         user_info = {"id": user_id} | user_profile.dict()
 
-        async with uow:
-            user_id = await uow.user_profile.create(data=user_info)
-            await uow.commit()
+        async with unit_of_work:
+            user_id = await unit_of_work.user_profile.create(data=user_info)
+            await unit_of_work.commit()
         return user_id
 
     @staticmethod
     async def get_user(
-        uow: IUnitOfWork,
+        unit_of_work: IUnitOfWork,
         user_id: UUID,
     ) -> UUID:
-        async with uow:
-            user = await uow.user_profile.read(id=user_id)
+        async with unit_of_work:
+            user = await unit_of_work.user_profile.read(id=user_id)
         return user
 
     @staticmethod
     async def update_user(
-        uow: IUnitOfWork,
+        unit_of_work: IUnitOfWork,
         user_id: UUID,
         user_profile: UserProfileRegisterSchemaRequest,
     ) -> UUID:
         user = user_profile.dict()
 
-        async with uow:
-            user_id = await uow.user_profile.update(id=user_id, data=user)
-            await uow.commit()
+        async with unit_of_work:
+            user_id = await unit_of_work.user_profile.update(id=user_id, data=user)
+            await unit_of_work.commit()
         return user_id
 
     @staticmethod
     async def delete_user(
-        uow: IUnitOfWork,
+        unit_of_work: IUnitOfWork,
         user_id: UUID,
     ) -> UUID:
-        async with uow:
-            user_id = await uow.user_profile.delete(id=user_id)
-            await uow.commit()
+        async with unit_of_work:
+            user_id = await unit_of_work.user_profile.delete(id=user_id)
+            await unit_of_work.commit()
         return user_id
 
 

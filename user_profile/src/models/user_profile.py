@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from uuid import UUID
 from datetime import datetime
+from datetime import date
 
 
 class UserProfileRegisterSchemaRequest(BaseModel):
@@ -8,7 +9,7 @@ class UserProfileRegisterSchemaRequest(BaseModel):
     last_name: str
     country: str
     city: str
-    age: int
+    age: date
 
 
 class UserProfileRegisterSchemaResponse(BaseModel):
@@ -23,7 +24,7 @@ class UserProfileSchema(BaseModel):
     last_name: str
     country: str
     city: str
-    age: int
+    age: date
 
 
 class UserProfileUpdateSchemaRequest(BaseModel):
@@ -31,7 +32,7 @@ class UserProfileUpdateSchemaRequest(BaseModel):
     last_name: str
     country: str
     city: str
-    age: int
+    age: date
 
 
 class UserProfileUpdateSchemaResponse(BaseModel):
