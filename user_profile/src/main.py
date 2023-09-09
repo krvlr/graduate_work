@@ -1,20 +1,26 @@
+import logging.config
+
 import uvicorn
-from api.v1 import ugc, core
-from core.config import jaeger_settings, base_settings, logger_settings, kafka_settings
+from api.v1 import core, user_profile
+from core.config import (
+    jaeger_settings,
+    base_settings,
+    logger_settings,
+)
 from core.logger import LOGGER_CONFIG
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
-from aiokafka import AIOKafkaProducer
-
 from utils.jaeger_config import configure_jaeger_tracer
 
-from db import kafka_provider
+logging.config.dictConfig(LOGGER_CONFIG)
+logger = logging.getLogger(__name__)
+
 
 app = FastAPI(
     title=base_settings.project_name,
-    docs_url="/api/ugc/openapi",
-    openapi_url="/api/ugc/openapi.json",
+    docs_url="/api/user_profile/openapi",
+    openapi_url="/api/user_profile/openapi.json",
     default_response_class=ORJSONResponse,
 )
 
@@ -24,19 +30,16 @@ configure_jaeger_tracer(app, jaeger_settings.host, jaeger_settings.port)
 
 @app.on_event("startup")
 async def startup():
-    kafka_provider.kafka_producer = AIOKafkaProducer(
-        bootstrap_servers=[f"{kafka_settings.host}:{kafka_settings.port}"]
-    )
-    await kafka_provider.kafka_producer.start()
+    pass
 
 
 @app.on_event("shutdown")
 async def shutdown():
-    await kafka_provider.kafka_producer.stop()
+    pass
 
 
-app.include_router(ugc.router, prefix="/api/v1/ugc", tags=["ugc"])
-app.include_router(core.router, prefix="/api/v1/ugc", tags=["core"])
+app.include_router(core.router, prefix="/api/v1/user_profile", tags=["core"])
+app.include_router(user_profile.router, prefix="/api/v1/user_profile", tags=["user_profile"])
 
 
 if __name__ == "__main__":
