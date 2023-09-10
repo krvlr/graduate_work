@@ -8,21 +8,21 @@ class SignupRequest(BaseModel):
     password: str = Field(..., title="Пароль")
 
     @validator("login")
-    def login_alphanumeric(cls, v):
-        if not v.isalnum():
+    def login_alphanumeric(cls, value):
+        if not value.isalnum():
             raise AccountSignupException(
                 error_message="Логин может содержать только числа и буквенные символы."
             )
-        return v
+        return value
 
     @validator("password")
-    def password_length(cls, v):
-        if not (6 <= len(v) <= 72):
+    def password_length(cls, value):
+        if not (6 <= len(value) <= 72):
             raise AccountSignupException(
                 error_message="Пароль не удовлетворяет требованиям безопасности. "
                 "Длина пароля должна содержать не менее 6 и не более 72 символов."
             )
-        return v
+        return value
 
 
 class AuthResponse(BaseModel):

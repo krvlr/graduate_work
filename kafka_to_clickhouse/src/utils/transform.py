@@ -1,6 +1,11 @@
+import logging
+
 import abc
 from abc import ABCMeta
 from pydantic import BaseModel
+
+
+logger = logging.getLogger(__name__)
 
 
 class Event(BaseModel):
@@ -23,13 +28,7 @@ class Transformer(metaclass=ABCMeta):
 
 
 class DataTransformer(Transformer):
-    """
-    Класс для обработки данных, выгруженных из Kafka,
-    и дальнейшей загрузки в ClickHouse.
-    """
-
     def transform(self, event):
-        """Метод для преобразования строки к формату ClickHouse."""
         return Event(
             user_id=str(event["user_id"]),
             movie_id=str(event["movie_id"]),
@@ -37,6 +36,6 @@ class DataTransformer(Transformer):
         ).transform()
 
     def get_batch_transformer(self, events):
-        """Метод для преобразования батча к формату ClickHouse."""
         for event in events:
-            yield self.transform(event)
+            transform_event = self.transform(event)
+            yield transform_event

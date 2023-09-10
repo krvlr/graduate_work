@@ -1,11 +1,6 @@
 version: '3'
 
 volumes:
-  auth_postgres_data:
-  auth_redis_data:
-  postgres_movies_data:
-  redis_movies_data:
-  elasticsearch_movies_data:
   mongo_data1:
   mongo_data2:
   mongo_data3:
@@ -15,6 +10,11 @@ volumes:
   mongo_config1:
   mongo_config2:
   mongo_config3:
+  auth_postgres_data:
+  auth_redis_data:
+  postgres_movies_data:
+  redis_movies_data:
+  elasticsearch_movies_data:
   jaeger_volume:
   user_profile_postgres_data:
 
@@ -23,173 +23,9 @@ networks:
   auth_network:
   ugc_network:
   user_profile_network:
+  recommendation_network:
 
 services:
-  db-auth:
-    image: postgres:13-alpine
-    container_name: db-auth
-    restart: always
-    environment:
-      POSTGRES_DB: ${AUTH_DB_NAME}
-      POSTGRES_USER: ${AUTH_DB_USER}
-      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
-    volumes:
-      - auth_postgres_data:/var/lib/postgresql/data/
-    networks:
-      - auth_network
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d $$AUTH_POSTGRES_DB -U $$AUTH_POSTGRES_USER" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    expose:
-      - "5432"
-
-  redis-auth:
-    image: redis:7.0.8-alpine
-    container_name: redis-auth
-    restart: always
-    volumes:
-      - auth_redis_data:/data
-    networks:
-      - auth_network
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-    expose:
-      - "6379"
-
-  api-auth:
-    build:
-      context: flask_auth
-      dockerfile: Dockerfile
-    container_name: api-auth
-    restart: always
-    depends_on:
-      db-auth:
-        condition: service_healthy
-      redis-auth:
-        condition: service_healthy
-    env_file:
-      - .env
-    healthcheck:
-      test: "curl -H 'X-Request-Id: ${AUTH_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/health || exit 1"
-      interval: 10s
-      timeout: 10s
-      retries: 3
-    networks:
-      - auth_network
-    expose:
-      - "8000"
-
-  db-movies:
-    image: postgres:13-alpine
-    container_name: db-movies
-    restart: always
-    environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - postgres_movies_data:/var/lib/postgresql/data/
-      - ./movies_db/movies_database.sql:/docker-entrypoint-initdb.d/movies_database.sql
-    networks:
-      - movies_network
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    expose:
-      - "5432"
-
-  redis-movies:
-    image: redis:7.0.8-alpine
-    container_name: redis-movies
-    restart: always
-    volumes:
-      - redis_movies_data:/data
-    networks:
-      - movies_network
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-    expose:
-      - "6379"
-
-  elasticsearch-movies:
-    image: elasticsearch:7.17.9
-    container_name: elasticsearch-movies
-    restart: always
-    environment:
-      - "discovery.type=single-node"
-      - "xpack.security.enabled=false"
-      - "ES_JAVA_OPTS=-Xms200m -Xmx200m"
-    volumes:
-      - elasticsearch_movies_data:/usr/share/elasticsearch/data
-    networks:
-      - movies_network
-    healthcheck:
-      test: [ "CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    expose:
-      - "9200"
-
-  postgres_to_es:
-    build:
-      context: .
-      dockerfile: postgres_to_es/Dockerfile
-    container_name: postgres_to_es
-    restart: always
-    depends_on:
-      db-movies:
-        condition: service_healthy
-      elasticsearch-movies:
-        condition: service_healthy
-      redis-movies:
-        condition: service_healthy
-    env_file:
-      - .env
-    networks:
-      - movies_network
-
-  api-movies:
-    build:
-      context: ./fastapi_solution
-      dockerfile: Dockerfile
-    container_name: api-movies
-    restart: always
-    healthcheck:
-          test: "curl -H 'X-Request-Id: ${MOVIES_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/movies/health || exit 1"
-          interval: 10s
-          timeout: 10s
-          retries: 3
-    depends_on:
-      db-movies:
-        condition: service_healthy
-      elasticsearch-movies:
-        condition: service_healthy
-      redis-movies:
-        condition: service_healthy
-    env_file:
-      - .env
-    networks:
-      - movies_network
-    expose:
-      - "8000"
-
-  kafka_to_clickhouse:
-    build: ./kafka_to_clickhouse
-    container_name: kafka_to_clickhouse
-    restart: always
-    depends_on:
-      - zookeeper
-      - zookeeper_kafka
-    env_file:
-      - .env
-    networks:
-      - ugc_network
-
   zookeeper_kafka:
     image: confluentinc/cp-zookeeper:7.4.0
     hostname: zookeeper_kafka
@@ -232,6 +68,7 @@ services:
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
     networks:
       - ugc_network
+      - recommendation_network
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.4.0
@@ -437,24 +274,6 @@ services:
     networks:
       - ugc_network
 
-  api-ugc:
-    build:
-      context: ./ugc
-      dockerfile: Dockerfile
-    container_name: api-ugc
-    restart: always
-    healthcheck:
-      test: "curl -H 'X-Request-Id: ${UGC_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/ugc/health || exit 1"
-      interval: 10s
-      timeout: 10s
-      retries: 3
-    env_file:
-      - .env
-    networks:
-      - ugc_network
-    expose:
-      - "8000"
-
   mongors1n1:
     container_name: mongors1n1
     image: mongo
@@ -589,6 +408,206 @@ services:
     networks:
       - ugc_network
 
+  jaeger:
+    image: jaegertracing/all-in-one:1.20.0
+    container_name: jaeger
+    restart: always
+    volumes:
+      - jaeger_volume:/badger
+    environment:
+      - SPAN_STORAGE_TYPE=badger
+      - BADGER_EPHEMERAL=false
+      - BADGER_DIRECTORY_VALUE=/badger/data
+      - BADGER_DIRECTORY_KEY=/badger/key
+    networks:
+      - movies_network
+      - auth_network
+      - ugc_network
+      - user_profile_network
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+
+  db-auth:
+    image: postgres:13-alpine
+    container_name: db-auth
+    restart: always
+    environment:
+      POSTGRES_DB: ${AUTH_DB_NAME}
+      POSTGRES_USER: ${AUTH_DB_USER}
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
+    volumes:
+      - auth_postgres_data:/var/lib/postgresql/data/
+    networks:
+      - auth_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $$AUTH_POSTGRES_DB -U $$AUTH_POSTGRES_USER" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    expose:
+      - "5432"
+
+  redis-auth:
+    image: redis:7.0.8-alpine
+    container_name: redis-auth
+    restart: always
+    volumes:
+      - auth_redis_data:/data
+    networks:
+      - auth_network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+    expose:
+      - "6379"
+
+  api-auth:
+    build:
+      context: flask_auth
+      dockerfile: Dockerfile
+    container_name: api-auth
+    restart: always
+    depends_on:
+      db-auth:
+        condition: service_healthy
+      redis-auth:
+        condition: service_healthy
+    env_file:
+      - .env
+    healthcheck:
+      test: "curl -H 'X-Request-Id: ${AUTH_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/health || exit 1"
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    networks:
+      - auth_network
+    expose:
+      - "8000"
+
+  db-movies:
+    image: postgres:13-alpine
+    container_name: db-movies
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_movies_data:/var/lib/postgresql/data/
+      - ./movies_db/movies_database.sql:/docker-entrypoint-initdb.d/movies_database.sql
+    networks:
+      - movies_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    expose:
+      - "5432"
+
+  redis-movies:
+    image: redis:7.0.8-alpine
+    container_name: redis-movies
+    restart: always
+    volumes:
+      - redis_movies_data:/data
+    networks:
+      - movies_network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+    expose:
+      - "6379"
+
+  elasticsearch-movies:
+    image: elasticsearch:7.17.9
+    container_name: elasticsearch-movies
+    restart: always
+    environment:
+      - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
+      - "ES_JAVA_OPTS=-Xms200m -Xmx200m"
+    volumes:
+      - elasticsearch_movies_data:/usr/share/elasticsearch/data
+    networks:
+      - movies_network
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    expose:
+      - "9200"
+
+  postgres_to_es:
+    build:
+      context: .
+      dockerfile: postgres_to_es/Dockerfile
+    container_name: postgres_to_es
+    restart: always
+    depends_on:
+      db-movies:
+        condition: service_healthy
+      elasticsearch-movies:
+        condition: service_healthy
+      redis-movies:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - movies_network
+
+  api-movies:
+    build:
+      context: ./fastapi_solution
+      dockerfile: Dockerfile
+    container_name: api-movies
+    restart: always
+    healthcheck:
+          test: "curl -H 'X-Request-Id: ${MOVIES_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/movies/health || exit 1"
+          interval: 10s
+          timeout: 10s
+          retries: 3
+    depends_on:
+      db-movies:
+        condition: service_healthy
+      elasticsearch-movies:
+        condition: service_healthy
+      redis-movies:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - movies_network
+    expose:
+      - "8000"
+
+  kafka_to_clickhouse:
+    build: ./kafka_to_clickhouse
+    container_name: kafka_to_clickhouse
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - ugc_network
+
+  api-ugc:
+    build:
+      context: ./ugc
+      dockerfile: Dockerfile
+    container_name: api-ugc
+    restart: always
+    healthcheck:
+      test: "curl -H 'X-Request-Id: ${UGC_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/ugc/health || exit 1"
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    env_file:
+      - .env
+    networks:
+      - ugc_network
+    expose:
+      - "8000"
+
   api-ugc2:
     build:
       context: fastapi_ugc
@@ -609,26 +628,6 @@ services:
       - ugc_network
     expose:
       - "8000"
-
-  jaeger:
-    image: jaegertracing/all-in-one:1.20.0
-    container_name: jaeger
-    restart: always
-    volumes:
-      - jaeger_volume:/badger
-    environment:
-      - SPAN_STORAGE_TYPE=badger
-      - BADGER_EPHEMERAL=false
-      - BADGER_DIRECTORY_VALUE=/badger/data
-      - BADGER_DIRECTORY_KEY=/badger/key
-    networks:
-      - movies_network
-      - auth_network
-      - ugc_network
-      - user_profile_network
-    ports:
-      - "6831:6831/udp"
-      - "16686:16686"
 
   db-user-profile:
     image: postgres:13-alpine
@@ -695,5 +694,6 @@ services:
       - auth_network
       - ugc_network
       - user_profile_network
+      - recommendation_network
     ports:
       - "80:80"

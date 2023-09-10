@@ -6,5 +6,5 @@ from pydantic import BaseModel
 
 class QueueProvider(metaclass=ABCMeta):
     @abc.abstractmethod
-    async def send(self, topic, event, key):
+    async def send(self, topic: str, event: dict, key: str):
         pass
