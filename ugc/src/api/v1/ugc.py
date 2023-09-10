@@ -16,7 +16,7 @@ async def register_film_timestamp(
     film_progress: FilmProgress,
     queue_provider: KafkaQueueProvider = Depends(get_kafka_queue_provider),
 ):
-    event = film_progress.dict()
-    key = event["user_id"] + event["movie_id"]
+    event = film_progress.transform()
+    key = f'{event["user_id"]}-{event["movie_id"]}'
     await queue_provider.send(topic=kafka_settings.topic, event=event, key=key)
     return {"status": "OK"}
