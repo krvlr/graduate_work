@@ -20,7 +20,7 @@ class KafkaSettings(BaseConfig):
     movies_topic: str = Field(default="movies_views", env="MOVIES_TOPIC")
     num_messages: str = Field(default="200", env="KAFKA_EXTRACT_NUM_MESSAGES")
     timeout: str = Field(default="10", env="KAFKA_EXTRACT_TIMEOUT")
-    group_id: str = Field(default="app", env="KAFKA_GROUP_ID")
+    group_id: str = Field(default="ugc", env="UGC_KAFKA_GROUP_ID")
     auto_offset_reset: str = Field(default="smallest", env="KAFKA_AUTO_OFFSET_RESET")
 
     def get_topics(self):

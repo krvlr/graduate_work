@@ -7,7 +7,7 @@ class BaseConfig(BaseSettings):
 
 
 class BaseSettings(BaseConfig):
-    project_name: str = Field(default="user_profile", env="PROJECT_NAME")
+    project_name: str = Field(default="user_profile", env="USER_PROFILE_PROJECT_NAME")
     secret_key: str = Field(default="SUPER-SECRET-KEY", repr=False, env="JWT_SECRET_KEY")
 
 

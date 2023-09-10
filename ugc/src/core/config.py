@@ -7,7 +7,8 @@ class BaseConfig(BaseSettings):
 
 
 class BaseSettings(BaseConfig):
-    project_name: str = Field(default="movies", env="PROJECT_NAME")
+    project_name: str = Field(default="movies", env="UGC_PROJECT_NAME")
+    secret_key: str = Field(default="SUPER-SECRET-KEY", repr=False, env="JWT_SECRET_KEY")
 
 
 class LoggerSettings(BaseConfig):
@@ -28,7 +29,10 @@ class JaegerSettings(BaseConfig):
 class KafkaSettings(BaseConfig):
     host: str = Field(default="127.0.0.1", env="KAFKA_HOST")
     port: str = Field(default="9092", env="KAFKA_PORT")
-    topic: str = Field(default="movies_views", env="KAFKA_TOPICS")
+    movies_topic: str = Field(default="movies_views", env="UGC_MOVIES_TOPIC")
+    bookmarks_topic: str = Field(default="bookmarks", env="UGC_BOOKMARKS_TOPIC")
+    ratings_topic: str = Field(default="ratings", env="UGC_RATINGS_TOPIC")
+    reviews_topic: str = Field(default="reviews", env="UGC_REVIEWS_TOPIC")
 
 
 base_settings = BaseSettings()

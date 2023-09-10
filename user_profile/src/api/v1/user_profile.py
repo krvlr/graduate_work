@@ -8,7 +8,7 @@ from models.user_profile import (
     UserGenreRegisterSchemaRequest,
 )
 from services.user_profile import UserProfileService, get_user_profile_service
-from services.auth_service import JWTBearerService, get_jwt_bearer_service
+from services.auth_service import get_jwt_bearer_service
 from fastapi.security import HTTPBearer
 
 from fastapi import APIRouter, Depends, status
@@ -28,7 +28,7 @@ async def register_user_genre(
     unit_of_work: Annotated[IUnitOfWork, Depends(UnitOfWork)],
     user_profile_service: Annotated[UserProfileService, Depends(get_user_profile_service)],
     user_id: Annotated[HTTPBearer, Depends(get_jwt_bearer_service())],
-):
+) -> dict:
     user_id, genre_id = await user_profile_service.add_user_genre(
         unit_of_work=unit_of_work, user_id=user_id, user_preference=user_preference
     )
@@ -45,7 +45,7 @@ async def register_user_profile(
     unit_of_work: Annotated[IUnitOfWork, Depends(UnitOfWork)],
     user_profile_service: Annotated[UserProfileService, Depends(get_user_profile_service)],
     user_id: Annotated[HTTPBearer, Depends(get_jwt_bearer_service())],
-):
+) -> dict:
     user_id = await user_profile_service.add_user(
         unit_of_work=unit_of_work, user_id=user_id, user_profile=user_profile
     )
@@ -62,7 +62,7 @@ async def update_user_profile(
     unit_of_work: Annotated[IUnitOfWork, Depends(UnitOfWork)],
     user_profile_service: Annotated[UserProfileService, Depends(get_user_profile_service)],
     user_id: Annotated[HTTPBearer, Depends(get_jwt_bearer_service())],
-):
+) -> dict:
     user_id = await user_profile_service.update_user(
         unit_of_work=unit_of_work, user_id=user_id, user_profile=user_profile
     )
@@ -76,7 +76,7 @@ async def user_profile_details(
     unit_of_work: Annotated[IUnitOfWork, Depends(UnitOfWork)],
     user_profile_service: Annotated[UserProfileService, Depends(get_user_profile_service)],
     user_id: Annotated[HTTPBearer, Depends(get_jwt_bearer_service())],
-):
+) -> UserProfileSchema:
     user_info = await user_profile_service.get_user(unit_of_work=unit_of_work, user_id=user_id)
     return user_info
 
@@ -86,6 +86,6 @@ async def updated_user_profile(
     unit_of_work: Annotated[IUnitOfWork, Depends(UnitOfWork)],
     user_profile_service: Annotated[UserProfileService, Depends(get_user_profile_service)],
     user_id: Annotated[HTTPBearer, Depends(get_jwt_bearer_service())],
-):
+) -> dict:
     user_id = await user_profile_service.delete_user(unit_of_work=unit_of_work, user_id=user_id)
     return {"user_id": user_id}

@@ -213,7 +213,7 @@ services:
       - .env
     networks:
       - ugc_network
-    ports:
+    expose:
       - "8000"
 
   api-ugc2:
