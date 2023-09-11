@@ -15,8 +15,8 @@ from core.logstash import config_logstash, add_log_request_id
 
 app = FastAPI(
     title=base_settings.project_name,
-    docs_url="/api/v1/ugc2/openapi",
-    openapi_url="/api/v1/ugc2/openapi.json",
+    docs_url="/api/ugc2/openapi",
+    openapi_url="/api/ugc2/openapi.json",
     default_response_class=ORJSONResponse,
 )
 

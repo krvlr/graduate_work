@@ -1,6 +1,5 @@
 import uvicorn
 from api.v1 import ugc, core
-from core import config
 from core.config import jaeger_settings, base_settings, logger_settings, kafka_settings
 from core.logger import LOGGER_CONFIG
 from fastapi import FastAPI
@@ -14,10 +13,11 @@ from db import kafka_provider
 
 app = FastAPI(
     title=base_settings.project_name,
-    docs_url="/api/openapi",
-    openapi_url="/api/openapi.json",
+    docs_url="/api/ugc/openapi",
+    openapi_url="/api/ugc/openapi.json",
     default_response_class=ORJSONResponse,
 )
+
 
 configure_jaeger_tracer(app, jaeger_settings.host, jaeger_settings.port)
 
