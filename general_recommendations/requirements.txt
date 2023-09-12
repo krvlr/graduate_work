@@ -1,0 +1,11 @@
+fastapi==0.103.1
+pydantic==2.3.0
+pydantic-settings==2.0.3
+motor==3.3.1
+orjson==3.9.7
+opentelemetry-api==1.19.0
+opentelemetry-sdk==1.19.0
+opentelemetry-instrumentation-fastapi==0.40b0
+opentelemetry-exporter-jaeger==1.19.0
+uvicorn==0.23.2
+gunicorn==21.2.0
