@@ -1,8 +1,7 @@
 import json
 import logging
 
-import abc
-from abc import ABCMeta
+from abc import ABC, abstractmethod
 from confluent_kafka.cimpl import Consumer
 from confluent_kafka.admin import AdminClient, NewTopic
 from utils.utils import backoff
@@ -10,8 +9,8 @@ from utils.utils import backoff
 logger = logging.getLogger(__name__)
 
 
-class Extractor(metaclass=ABCMeta):
-    @abc.abstractmethod
+class Extractor(ABC):
+    @abstractmethod
     def get_batch_extractor(self, batch_size: int, timeout: int):
         pass
 
@@ -46,4 +45,4 @@ class KafkaExtractor(Extractor):
         logger.info(f"Extract {len(events)} evens")
 
         for event in events:
-            yield json.loads(event.value().decode("utf-8"))
+            yield event.topic(), json.loads(event.value().decode("utf-8"))
