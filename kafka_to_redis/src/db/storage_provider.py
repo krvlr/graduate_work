@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-from datetime import timedelta
-from typing import Any, Union
+from typing import Any
 
 from redis import Redis
 

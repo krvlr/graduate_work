@@ -1,14 +1,13 @@
 import logging
-from http import HTTPStatus
 from functools import lru_cache
+from http import HTTPStatus
 
 import jwt
+from core.config import base_settings
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPBearer
 from jwt import ExpiredSignatureError
 from pydantic import ValidationError
-
-from core.config import base_settings
 
 logger = logging.getLogger(__name__)
 

@@ -1,10 +1,8 @@
+import json
 from typing import Optional
 
-from db.base_db import QueueProvider
-
 from aiokafka import AIOKafkaProducer
-import json
-
+from db.base_db import QueueProvider
 
 kafka_producer: Optional[AIOKafkaProducer] = None
 

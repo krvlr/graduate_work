@@ -1,13 +1,9 @@
 import logging
-
-from uuid import UUID
 from abc import ABC, abstractmethod
-from utils.utils import backoff
-from datetime import timedelta
-from typing import Any, Union, Generator
-from db.storage_provider import StorageProvider, StorageRedisProvider
+from typing import Generator
 
-from redis import Redis
+from db.storage_provider import StorageProvider
+from utils.utils import backoff
 
 logger = logging.getLogger(__name__)
 

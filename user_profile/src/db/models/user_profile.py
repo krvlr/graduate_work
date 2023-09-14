@@ -1,9 +1,10 @@
+from datetime import date, datetime
+from uuid import UUID, uuid4
+
 from db import Base
-from uuid import uuid4, UUID
-from sqlalchemy import func, ForeignKey
-from datetime import datetime, date
+from models.user_profile import GenreSchema, UserProfileSchema
+from sqlalchemy import ForeignKey, func
 from sqlalchemy.orm import Mapped, WriteOnlyMapped, mapped_column, relationship
-from models.user_profile import UserProfileSchema, GenreSchema
 
 
 class UserProfile(Base):

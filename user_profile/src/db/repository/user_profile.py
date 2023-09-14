@@ -1,5 +1,5 @@
+from db.models.user_profile import Genre, UserProfile, UserProfileGenre
 from db.repository.base import SQLAlchemyRepository
-from db.models.user_profile import UserProfile, Genre, UserProfileGenre
 
 
 class UserProfileRepository(SQLAlchemyRepository):

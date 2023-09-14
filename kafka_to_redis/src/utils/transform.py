@@ -1,9 +1,8 @@
 import logging
-
 from abc import ABC, abstractmethod
-from pydantic import BaseModel
 from typing import Generator
 
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 

@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
 from typing import Type
+
 from db import async_session_maker
 from db.repository.user_profile import (
-    UserProfileRepository,
     GenreRepository,
     UserProfileGenreRepository,
+    UserProfileRepository,
 )
 
 

@@ -1,6 +1,7 @@
-from pydantic import BaseModel, validator
-from uuid import UUID
 from datetime import datetime
+from uuid import UUID
+
+from pydantic import BaseModel, validator
 
 
 class MovieProgress(BaseModel):

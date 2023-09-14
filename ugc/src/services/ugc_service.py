@@ -1,7 +1,8 @@
-from db.base_db import QueueProvider
-from fastapi import Depends
 from typing import Annotated
+
+from db.base_db import QueueProvider
 from db.kafka_provider import get_kafka_provider
+from fastapi import Depends
 
 
 class UGCService:

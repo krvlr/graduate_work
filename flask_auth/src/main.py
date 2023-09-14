@@ -6,27 +6,24 @@ import logging.config
 from datetime import timedelta
 from http import HTTPStatus
 
-from api.v1 import auth_handlers
-from models.common import BaseResponse
-
-from flasgger import Swagger
-from flask import Flask, request, jsonify
-from flask_jwt_extended import JWTManager
-
-from api.v1 import api_auth_bp
+from api.v1 import api_auth_bp, auth_handlers
 from api.v1.oauth_handlers import oauth
-from config.swagger import template, swagger_config
+from config.swagger import swagger_config, template
 from core.config import (
     common_settings,
+    jaeger_settings,
     jwt_settings,
-    role_settings,
     oauth_google_settings,
     oauth_yandex_settings,
+    role_settings,
 )
-from core.config import jaeger_settings
 from core.logger import LOGGER_CONFIG
-from db import init_db, alchemy
-from db.models.user import User, Role
+from db import alchemy, init_db
+from db.models.user import Role, User
+from flasgger import Swagger
+from flask import Flask, jsonify, request
+from flask_jwt_extended import JWTManager
+from models.common import BaseResponse
 from utils.click_commands import create_admin
 from utils.exceptions import add_base_exceptions_handlers
 from utils.jaeger_config import configure_jaeger_tracer

@@ -1,20 +1,15 @@
 import logging.config
 
-from core.config import kafka_settings, redis_settings
-
-from models.movie import MovieProgress, MovieBookmark, MovieReview, MovieRating
-
-from utils.extract import KafkaExtractor, Extractor
-from utils.transform import DataTransformer, Transformer
-from utils.load import Loader, RedisLoader
-
-from confluent_kafka.cimpl import Consumer
 from confluent_kafka.admin import AdminClient
-
+from confluent_kafka.cimpl import Consumer
+from core.config import kafka_settings, redis_settings
 from core.logger import LOGGER_CONFIG
-
-from redis import Redis
 from db.storage_provider import StorageRedisProvider
+from models.movie import MovieBookmark, MovieProgress, MovieRating, MovieReview
+from redis import Redis
+from utils.extract import Extractor, KafkaExtractor
+from utils.load import Loader, RedisLoader
+from utils.transform import DataTransformer, Transformer
 
 logging.config.dictConfig(LOGGER_CONFIG)
 logger = logging.getLogger(__name__)

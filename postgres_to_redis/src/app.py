@@ -1,25 +1,17 @@
 import contextlib
-
 import logging.config
+from datetime import datetime
+from time import sleep
 
 from core.config import etl_settings, postgres_settings, redis_settings
-
-from utils.extract import PostgresExtractor, Extractor, get_conn_postgresql
-from utils.transform import DataTransformer, Transformer
-from utils.load import Loader, RedisLoader
-
 from core.logger import LOGGER_CONFIG
-
-from utils.state import JsonFileStorage, State
-
-from redis import Redis
-from db.storage_provider import StorageRedisProvider
-
-from datetime import datetime
-
 from core.params import query_template
-
-from time import sleep
+from db.storage_provider import StorageRedisProvider
+from redis import Redis
+from utils.extract import Extractor, PostgresExtractor, get_conn_postgresql
+from utils.load import Loader, RedisLoader
+from utils.state import JsonFileStorage, State
+from utils.transform import DataTransformer, Transformer
 
 logging.config.dictConfig(LOGGER_CONFIG)
 logger = logging.getLogger(__name__)

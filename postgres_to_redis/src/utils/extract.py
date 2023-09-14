@@ -1,15 +1,13 @@
 import json
 import logging
-
 from abc import ABC, abstractmethod
-from utils.utils import backoff
-
 from typing import Generator
 
 import psycopg2
 from psycopg2.extensions import connection as _connection
 from psycopg2.extensions import cursor as _cursor
 from psycopg2.extras import DictCursor
+from utils.utils import backoff
 
 logger = logging.getLogger(__name__)
 
