@@ -37,7 +37,6 @@ class PostgresSettings(BaseConfig):
         return f"postgresql+asyncpg://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
 
     def get_db_uri_alembic(self) -> str:
-        print(self.db_host, self.db_port, self.db_name, self.db_user, self.db_password)
         return f"postgresql://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
 
 

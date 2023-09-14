@@ -17,6 +17,8 @@ volumes:
   elasticsearch_movies_data:
   jaeger_volume:
   user_profile_postgres_data:
+  user_data_redis:
+  postgres_to_redis_data:
 
 networks:
   movies_network:
@@ -217,60 +219,6 @@ services:
       KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
       KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
       KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
-    networks:
-      - ugc_network
-
-  zookeeper:
-    image: zookeeper:3.5
-    container_name: zookeeper
-    hostname: zookeeper
-    networks:
-      - ugc_network
-
-  clickhouse-node1:
-    image: yandex/clickhouse-server:20.4
-    container_name: clickhouse-node1
-    hostname: clickhouse-node1
-    ports:
-      - "8123:8123"
-      - "9000:9000"
-    volumes:
-      - ./data/node1:/etc/clickhouse-server
-    depends_on:
-      - zookeeper
-    networks:
-      - ugc_network
-
-  clickhouse-node2:
-    image: yandex/clickhouse-server:20.4
-    container_name: clickhouse-node2
-    hostname: clickhouse-node2
-    volumes:
-      - ./data/node2:/etc/clickhouse-server
-    depends_on:
-      - zookeeper
-    networks:
-      - ugc_network
-
-  clickhouse-node3:
-    image: yandex/clickhouse-server:20.4
-    container_name: clickhouse-node3
-    hostname: clickhouse-node3
-    volumes:
-      - ./data/node3:/etc/clickhouse-server
-    depends_on:
-      - zookeeper
-    networks:
-      - ugc_network
-
-  clickhouse-node4:
-    image: yandex/clickhouse-server:20.4
-    container_name: clickhouse-node4
-    hostname: clickhouse-node4
-    volumes:
-      - ./data/node4:/etc/clickhouse-server
-    depends_on:
-      - zookeeper
     networks:
       - ugc_network
 
@@ -581,15 +529,6 @@ services:
     expose:
       - "8000"
 
-  kafka_to_clickhouse:
-    build: ./kafka_to_clickhouse
-    container_name: kafka_to_clickhouse
-    restart: always
-    env_file:
-      - .env
-    networks:
-      - ugc_network
-
   api-ugc:
     build:
       context: ./ugc
@@ -607,6 +546,49 @@ services:
       - ugc_network
     expose:
       - "8000"
+
+  redis-user-data:
+    image: redis:7.0.8-alpine
+    container_name: redis-user-data
+    restart: always
+    volumes:
+      - user_data_redis:/data
+    networks:
+      - recommendation_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+    expose:
+      - "6379"
+
+  kafka_to_redis:
+    build: ./kafka_to_redis
+    container_name: kafka_to_redis
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      redis-user-data:
+        condition: service_healthy
+    networks:
+      - ugc_network
+      - recommendation_network
+
+  postgres_to_redis:
+    build: ./postgres_to_redis
+    container_name: postgres_to_redis
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      redis-user-data:
+        condition: service_healthy
+      db-user-profile:
+        condition: service_healthy
+    networks:
+      - user_profile_network
+      - recommendation_network
+    volumes:
+      - postgres_to_redis_data:/opt/app
 
   api-ugc2:
     build:
