@@ -2,15 +2,10 @@ import logging.config
 
 import uvicorn
 from api.v1 import core, user_profile
-from core.config import (
-    jaeger_settings,
-    base_settings,
-    logger_settings,
-)
+from core.config import base_settings, jaeger_settings, logger_settings
 from core.logger import LOGGER_CONFIG
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-
 from utils.jaeger_config import configure_jaeger_tracer
 
 logging.config.dictConfig(LOGGER_CONFIG)

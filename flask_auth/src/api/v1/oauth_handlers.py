@@ -1,9 +1,8 @@
 from http import HTTPStatus
 
 from authlib.integrations.flask_client import OAuth
-from flask import Blueprint, url_for, jsonify
-
 from core.config import oauth_yandex_settings
+from flask import Blueprint, jsonify, url_for
 from models.auth_models import AuthResponse
 from models.common import BaseResponse
 from models.oauth_models import GoogleUser, YandexUser

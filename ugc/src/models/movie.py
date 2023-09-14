@@ -1,8 +1,9 @@
-from pydantic import BaseModel, validator
-from uuid import UUID
-from enum import Enum
 from datetime import datetime
-from fastapi import status, HTTPException
+from enum import Enum
+from uuid import UUID
+
+from fastapi import HTTPException, status
+from pydantic import BaseModel, validator
 
 
 class BookmarkAction(Enum):
@@ -73,7 +74,7 @@ class MovieRating(BaseModel):
         return {
             "movie_id": str(self.movie_id),
             "rating": str(self.rating),
-            "created": str(self.created)
+            "created": str(self.created),
         }
 
     @validator("rating")

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pydantic import BaseSettings, Field, AnyUrl
+from pydantic import AnyUrl, BaseSettings, Field
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 MIGRATION_DIR = BASE_DIR / "db" / "migrations"

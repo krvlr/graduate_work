@@ -1,15 +1,12 @@
 import uvicorn
-from api.v1 import ugc, core
-from core.config import jaeger_settings, base_settings, logger_settings, kafka_settings
+from aiokafka import AIOKafkaProducer
+from api.v1 import core, ugc
+from core.config import base_settings, jaeger_settings, kafka_settings, logger_settings
 from core.logger import LOGGER_CONFIG
+from db import kafka_provider
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
-
-from aiokafka import AIOKafkaProducer
-
 from utils.jaeger_config import configure_jaeger_tracer
-
-from db import kafka_provider
 
 app = FastAPI(
     title=base_settings.project_name,

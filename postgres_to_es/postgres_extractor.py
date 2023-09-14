@@ -6,7 +6,6 @@ from decorators import backoff
 from psycopg2.extras import RealDictCursor
 from settings import ETL_BATCH_SIZE, POSTGRES_CONNECTION_SETTINGS
 
-
 FILMWORKS_QUERY = """
         SELECT
            fw.id,

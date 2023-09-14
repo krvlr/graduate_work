@@ -1,8 +1,7 @@
 from typing import Type
 
-from pydantic import BaseModel
-
 from decorators import backoff
+from pydantic import BaseModel
 
 
 class DataTransform:

@@ -2,20 +2,16 @@ import random
 import string
 from functools import lru_cache
 
-from flask import current_app, request
-from flask_jwt_extended import create_access_token, create_refresh_token, get_jti
-
 from core.config import role_settings
 from db import alchemy
-from db.models.user import User, Role
+from db.models.user import Role, User
 from db.token_storage_adapter import TokenStorageAdapter, get_redis_adapter
+from flask import current_app, request
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jti
 from models.auth_models import JwtPayload
 from models.oauth_models import SocialUser
 from services.auth_service import get_auth_service
-from utils.exceptions import (
-    AccountSigninException,
-    AccountSignupException,
-)
+from utils.exceptions import AccountSigninException, AccountSignupException
 
 auth_service = get_auth_service()
 

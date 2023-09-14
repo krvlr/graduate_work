@@ -1,6 +1,7 @@
 from functools import lru_cache
-from models.user_profile import UserProfileRegisterSchemaRequest
 from uuid import UUID
+
+from models.user_profile import UserProfileRegisterSchemaRequest
 from utils.unitofwork import IUnitOfWork
 
 
@@ -20,7 +21,9 @@ class UserProfileService:
             except Exception:
                 genre_id = await unit_of_work.genre.create(data=user_preference.dict())
 
-            await unit_of_work.user_profile_genre.create(data={"user_id": user_id, "genre_id": genre_id})
+            await unit_of_work.user_profile_genre.create(
+                data={"user_id": user_id, "genre_id": genre_id}
+            )
             await unit_of_work.commit()
         return user_id, genre_id
 

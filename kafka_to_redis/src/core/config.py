@@ -11,7 +11,7 @@ class KafkaSettings(BaseConfig):
     kafka_port: str = Field(default="9092", env="KAFKA_PORT")
     num_messages: str = Field(default="200", env="KAFKA_EXTRACT_NUM_MESSAGES")
     timeout: str = Field(default="10", env="KAFKA_EXTRACT_TIMEOUT")
-    group_id: str = Field(default="ugc", env="UGC_KAFKA_GROUP_ID")
+    group_id: str = Field(default="user_data", env="USER_DATA_KAFKA_GROUP_ID")
     auto_offset_reset: str = Field(default="smallest", env="KAFKA_AUTO_OFFSET_RESET")
     movies_topic: str = Field(default="movies_views", env="MOVIES_TOPIC")
     bookmarks_topic: str = Field(default="bookmarks", env="UGC_BOOKMARKS_TOPIC")

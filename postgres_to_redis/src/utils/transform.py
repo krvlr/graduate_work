@@ -1,10 +1,9 @@
 import logging
-
 from abc import ABC, abstractmethod
-from pydantic import BaseModel
 from typing import Generator
 
 from models.movie import UserProfile
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 

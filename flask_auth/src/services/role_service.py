@@ -1,6 +1,7 @@
 from functools import lru_cache
 
 from core.config import role_settings
+from db import alchemy
 from db.models.user import Role, User, UserActionsHistory, UserRole
 from db.token_storage_adapter import TokenStatus, TokenStorageAdapter, get_redis_adapter
 from flask import current_app, request
@@ -16,8 +17,6 @@ from utils.exceptions import (
     AccountRoleDetailsException,
     AccountRolesDetailsException,
 )
-
-from db import alchemy
 
 
 class RoleService:
