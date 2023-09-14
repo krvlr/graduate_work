@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from uuid import UUID
-from datetime import datetime
-from datetime import date
+from datetime import datetime, date
 
 
 class UserProfileRegisterSchemaRequest(BaseModel):
