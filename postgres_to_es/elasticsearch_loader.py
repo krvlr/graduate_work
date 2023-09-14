@@ -1,11 +1,10 @@
 from http import HTTPStatus
 
+from decorators import backoff
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
 from loguru import logger
 from pydantic import BaseModel
-
-from decorators import backoff
 from settings import ELASTIC_SEARCH_URL
 
 

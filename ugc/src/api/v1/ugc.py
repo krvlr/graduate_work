@@ -1,14 +1,13 @@
 import logging
+from typing import Annotated
 
 from core.config import kafka_settings
-from models.movie import MovieProgress, MovieBookmark, MovieReview, MovieRating
 from db.base_db import QueueProvider
+from fastapi import APIRouter, Depends
+from fastapi.security import HTTPBearer
+from models.movie import MovieBookmark, MovieProgress, MovieRating, MovieReview
 from services.auth_service import get_jwt_bearer_service
 from services.ugc_service import UGCService, get_ugc_service
-from typing import Annotated
-from fastapi.security import HTTPBearer
-
-from fastapi import APIRouter, Depends
 
 logger = logging.getLogger(__name__)
 

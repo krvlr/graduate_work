@@ -1,20 +1,19 @@
 import logging
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, status
+from fastapi.security import HTTPBearer
 from models.user_profile import (
+    UserGenreRegisterSchemaRequest,
     UserProfileRegisterSchemaRequest,
     UserProfileRegisterSchemaResponse,
     UserProfileSchema,
     UserProfileUpdateSchemaRequest,
     UserProfileUpdateSchemaResponse,
-    UserGenreRegisterSchemaRequest,
 )
-from services.user_profile import UserProfileService, get_user_profile_service
 from services.auth_service import get_jwt_bearer_service
-from fastapi.security import HTTPBearer
-
-from fastapi import APIRouter, Depends, status
-from typing import Annotated
+from services.user_profile import UserProfileService, get_user_profile_service
 from utils.unitofwork import IUnitOfWork, UnitOfWork
-
 
 logger = logging.getLogger(__name__)
 

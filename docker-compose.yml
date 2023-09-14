@@ -1,15 +1,6 @@
 version: '3'
 
 volumes:
-  mongo_data1:
-  mongo_data2:
-  mongo_data3:
-  mongo_data4:
-  mongo_data5:
-  mongo_data6:
-  mongo_config1:
-  mongo_config2:
-  mongo_config3:
   auth_postgres_data:
   auth_redis_data:
   postgres_movies_data:
@@ -17,6 +8,9 @@ volumes:
   elasticsearch_movies_data:
   jaeger_volume:
   user_profile_postgres_data:
+  user_data_redis:
+  postgres_to_redis_data:
+  mongo_data:
 
 networks:
   movies_network:
@@ -220,190 +214,14 @@ services:
     networks:
       - ugc_network
 
-  zookeeper:
-    image: zookeeper:3.5
-    container_name: zookeeper
-    hostname: zookeeper
-    networks:
-      - ugc_network
-
-  clickhouse-node1:
-    image: yandex/clickhouse-server:20.4
-    container_name: clickhouse-node1
-    hostname: clickhouse-node1
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./mongodb_scripts:/scripts
+      - /etc/localtime:/etc/localtime:ro
+      - mongo_data:/data/db
     ports:
-      - "8123:8123"
-      - "9000:9000"
-    volumes:
-      - ./data/node1:/etc/clickhouse-server
-    depends_on:
-      - zookeeper
-    networks:
-      - ugc_network
-
-  clickhouse-node2:
-    image: yandex/clickhouse-server:20.4
-    container_name: clickhouse-node2
-    hostname: clickhouse-node2
-    volumes:
-      - ./data/node2:/etc/clickhouse-server
-    depends_on:
-      - zookeeper
-    networks:
-      - ugc_network
-
-  clickhouse-node3:
-    image: yandex/clickhouse-server:20.4
-    container_name: clickhouse-node3
-    hostname: clickhouse-node3
-    volumes:
-      - ./data/node3:/etc/clickhouse-server
-    depends_on:
-      - zookeeper
-    networks:
-      - ugc_network
-
-  clickhouse-node4:
-    image: yandex/clickhouse-server:20.4
-    container_name: clickhouse-node4
-    hostname: clickhouse-node4
-    volumes:
-      - ./data/node4:/etc/clickhouse-server
-    depends_on:
-      - zookeeper
-    networks:
-      - ugc_network
-
-  mongors1n1:
-    container_name: mongors1n1
-    image: mongo
-    command: mongod --shardsvr --replSet mongors1 --dbpath /data/db --port 27017
-    volumes:
-      - ./mongodb_scripts:/scripts
-      - /etc/localtime:/etc/localtime:ro
-      - mongo_data1:/data/db
-    expose:
-      - "27017"
-    networks:
-      - ugc_network
-
-  mongors1n2:
-    container_name: mongors1n2
-    image: mongo
-    command: mongod --shardsvr --replSet mongors1 --dbpath /data/db --port 27017
-    volumes:
-      - ./mongodb_scripts:/scripts
-      - /etc/localtime:/etc/localtime:ro
-      - mongo_data2:/data/db
-    expose:
-      - "27017"
-    networks:
-      - ugc_network
-
-  mongors1n3:
-    container_name: mongors1n3
-    image: mongo
-    command: mongod --shardsvr --replSet mongors1 --dbpath /data/db --port 27017
-    volumes:
-      - ./mongodb_scripts:/scripts
-      - /etc/localtime:/etc/localtime:ro
-      - mongo_data3:/data/db
-    expose:
-      - "27017"
-    networks:
-      - ugc_network
-
-  mongors2n1:
-    container_name: mongors2n1
-    image: mongo
-    command: mongod --shardsvr --replSet mongors2 --dbpath /data/db --port 27017
-    volumes:
-      - ./mongodb_scripts:/scripts
-      - /etc/localtime:/etc/localtime:ro
-      - mongo_data4:/data/db
-    expose:
-      - "27017"
-    networks:
-      - ugc_network
-
-  mongors2n2:
-    container_name: mongors2n2
-    image: mongo
-    command: mongod --shardsvr --replSet mongors2 --dbpath /data/db --port 27017
-    volumes:
-      - ./mongodb_scripts:/scripts
-      - /etc/localtime:/etc/localtime:ro
-      - mongo_data5:/data/db
-    expose:
-      - "27017"
-    networks:
-      - ugc_network
-
-  mongors2n3:
-    container_name: mongors2n3
-    image: mongo
-    command: mongod --shardsvr --replSet mongors2 --dbpath /data/db --port 27017
-    volumes:
-      - ./mongodb_scripts:/scripts
-      - /etc/localtime:/etc/localtime:ro
-      - mongo_data6:/data/db
-    expose:
-      - "27017"
-    networks:
-      - ugc_network
-
-  mongocfg1:
-    container_name: mongocfg1
-    image: mongo
-    command: mongod --configsvr --replSet mongors1conf --dbpath /data/db --port 27017
-    volumes:
-      - ./mongodb_scripts:/scripts
-      - /etc/localtime:/etc/localtime:ro
-      - mongo_config1:/data/db
-    expose:
-      - "27017"
-    networks:
-      - ugc_network
-
-  mongocfg2:
-    container_name: mongocfg2
-    image: mongo
-    command: mongod --configsvr --replSet mongors1conf --dbpath /data/db --port 27017
-    volumes:
-      - ./mongodb_scripts:/scripts
-      - /etc/localtime:/etc/localtime:ro
-      - mongo_config2:/data/db
-    expose:
-      - "27017"
-    networks:
-      - ugc_network
-
-  mongocfg3:
-    container_name: mongocfg3
-    image: mongo
-    command: mongod --configsvr --replSet mongors1conf --dbpath /data/db --port 27017
-    volumes:
-      - ./mongodb_scripts:/scripts
-      - /etc/localtime:/etc/localtime:ro
-      - mongo_config3:/data/db
-    expose:
-      - "27017"
-    networks:
-      - ugc_network
-
-  mongos1:
-    container_name: mongos1
-    image: mongo
-    depends_on:
-      - mongocfg1
-      - mongocfg2
-    command: mongos --configdb mongors1conf/mongocfg1:27017,mongocfg2:27017,mongocfg3:27017 --port 27017 --bind_ip_all
-    volumes:
-      - ./mongodb_scripts:/scripts
-      - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 27019:27017
-    expose:
       - "27017"
     networks:
       - ugc_network
@@ -581,15 +399,6 @@ services:
     expose:
       - "8000"
 
-  kafka_to_clickhouse:
-    build: ./kafka_to_clickhouse
-    container_name: kafka_to_clickhouse
-    restart: always
-    env_file:
-      - .env
-    networks:
-      - ugc_network
-
   api-ugc:
     build:
       context: ./ugc
@@ -608,26 +417,57 @@ services:
     expose:
       - "8000"
 
-  api-ugc2:
-    build:
-      context: fastapi_ugc
-      dockerfile: Dockerfile
-    container_name: api-ugc2
+  redis-user-data:
+    image: redis:7.0.8-alpine
+    container_name: redis-user-data
     restart: always
-    depends_on:
-      db-movies:
-        condition: service_healthy
+    volumes:
+      - user_data_redis:/data
+    networks:
+      - recommendation_network
     healthcheck:
-      test: "curl -H 'X-Request-Id: ${UGC_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/ugc2/health || exit 1"
-      interval: 10s
-      timeout: 10s
-      retries: 3
+      test: ["CMD", "redis-cli", "ping"]
+    expose:
+      - "6379"
+
+  kafka_to_redis:
+    build: ./kafka_to_redis
+    container_name: kafka_to_redis
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      redis-user-data:
+        condition: service_healthy
+    networks:
+      - ugc_network
+      - recommendation_network
+
+  kafka_to_mongo:
+    build: ./kafka_to_mongo
+    container_name: kafka_to_mongo
+    restart: always
     env_file:
       - .env
     networks:
       - ugc_network
-    expose:
-      - "8000"
+
+  postgres_to_redis:
+    build: ./postgres_to_redis
+    container_name: postgres_to_redis
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      redis-user-data:
+        condition: service_healthy
+      db-user-profile:
+        condition: service_healthy
+    networks:
+      - user_profile_network
+      - recommendation_network
+    volumes:
+      - postgres_to_redis_data:/opt/app
 
   db-user-profile:
     image: postgres:13-alpine
@@ -686,8 +526,6 @@ services:
       api-user-profile:
         condition: service_healthy
       api-ugc:
-        condition: service_healthy
-      api-ugc2:
         condition: service_healthy
     networks:
       - movies_network

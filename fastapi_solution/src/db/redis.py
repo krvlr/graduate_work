@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Any, Optional
 
 from db.base_cache import CacheProvider
 from redis.asyncio.client import Redis

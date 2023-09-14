@@ -1,8 +1,9 @@
-from pydantic import BaseModel, validator
-from uuid import UUID
-from enum import Enum
 from datetime import datetime
-from fastapi import status, HTTPException
+from enum import Enum
+from uuid import UUID
+
+from fastapi import HTTPException, status
+from pydantic import BaseModel, validator
 
 
 class BookmarkAction(Enum):
@@ -39,14 +40,14 @@ class MovieBookmark(BaseModel):
     def transform(self):
         return {
             "movie_id": str(self.movie_id),
-            "progress": self.action,
+            "action": self.action,
             "created": str(self.created),
         }
 
 
 class MovieReview(BaseModel):
     movie_id: UUID
-    action: str
+    summary: str
     description: str
     score: ReviewScore
     created: datetime
@@ -57,7 +58,7 @@ class MovieReview(BaseModel):
     def transform(self):
         return {
             "movie_id": str(self.movie_id),
-            "action": self.action,
+            "summary": self.summary,
             "description": self.description,
             "score": self.score,
             "created": str(self.created),
@@ -70,7 +71,11 @@ class MovieRating(BaseModel):
     created: datetime
 
     def transform(self):
-        return {"movie_id": str(self.movie_id), "rating": self.rating, "created": str(self.created)}
+        return {
+            "movie_id": str(self.movie_id),
+            "rating": str(self.rating),
+            "created": str(self.created),
+        }
 
     @validator("rating")
     @classmethod
@@ -80,3 +85,4 @@ class MovieRating(BaseModel):
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="Ошибка валидации. Рейтинг не может быть больше 10.",
             )
+        return value

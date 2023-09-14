@@ -1,8 +1,7 @@
 import click
+from db import alchemy
 from db.models.user import User
 from flask.cli import with_appcontext
-
-from db import alchemy
 
 
 @click.command("create_admin")

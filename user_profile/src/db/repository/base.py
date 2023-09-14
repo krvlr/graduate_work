@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
-from sqlalchemy import insert, select, update, delete
-from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
-from fastapi import status, HTTPException
+
+from fastapi import HTTPException, status
+from sqlalchemy import delete, insert, select, update
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class IRepository(ABC):

@@ -1,10 +1,9 @@
 import uuid
 
+from db import alchemy
 from flask_bcrypt import check_password_hash, generate_password_hash
 from sqlalchemy import UUID, Boolean, Column, DateTime, ForeignKey, String, UniqueConstraint, func
 from sqlalchemy.orm import relationship
-
-from db import alchemy
 
 
 class User(alchemy.Model):
