@@ -12,6 +12,7 @@ FILMWORKS_QUERY = """
            fw.title,
            fw.description,
            fw.rating as imdb_rating,
+           fw.creation_date,
            fw.modified,
            COALESCE (
                json_agg(

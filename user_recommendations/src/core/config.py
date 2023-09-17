@@ -9,7 +9,7 @@ class BaseConfig(BaseSettings):
 class BaseSettings(BaseConfig):
     project_name: str = Field(default="user_recommendation", env="USER_RECOMMENDATION_PROJECT_NAME")
     secret_key: str = Field(default="SUPER-SECRET-KEY", repr=False, env="JWT_SECRET_KEY")
-    user_recommendation_size: str = Field(default="10", repr=False, env="USER_RECOMMENDATION_SIZE")
+    user_recommendation_size: int = Field(default=10, env="USER_RECOMMENDATION_SIZE", ge=1)
 
 
 class LoggerSettings(BaseConfig):
@@ -59,9 +59,23 @@ class RedisSettings(BaseConfig):
     user_profile_key: str = Field(default="user_profile", env="USER_DATA_USER_PROFILE_KEY")
 
 
+class GeneralRecommendationsSettings(BaseConfig):
+    host: str = Field(default="localhost", env="GENERAL_RECOMMENDATIONS_API_HOST")
+    port: str = Field(default="8003", env="GENERAL_RECOMMENDATIONS_API_PORT")
+    replacement_path: str = Field(default="api/v1/general_recommendations/movies/replacement")
+    ratings_path: str = Field(default="api/v1/general_recommendations/movies/ratings")
+
+    def get_replacement_url(self):
+        return f"http://{self.host}:{self.port}/{self.replacement_path}"
+
+    def get_rating_url(self):
+        return f"http://{self.host}:{self.port}/{self.ratings_path}"
+
+
 base_settings = BaseSettings()
 logger_settings = LoggerSettings()
 jaeger_settings = JaegerSettings()
 mongo_settings = MongoSettings()
 movie_settings = MovieSettings()
 redis_settings = RedisSettings()
+general_recommendations_settings = GeneralRecommendationsSettings()

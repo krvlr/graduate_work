@@ -1,6 +1,7 @@
+from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 
 class ESFilmworkPersonData(BaseModel):
@@ -25,6 +26,11 @@ class ESFilmworkData(BaseModel):
     writers: list[ESFilmworkPersonData] = []
     directors: list[ESFilmworkPersonData] = []
     genres: list[ESFilmworkGenreData] = []
+    creation_date: Optional[datetime] = None
+
+    @validator("creation_date", pre=True)
+    def parse_creation_date(cls, value):
+        return datetime.combine(value, datetime.min.time())
 
 
 class ESPersonFilmworkData(BaseModel):
