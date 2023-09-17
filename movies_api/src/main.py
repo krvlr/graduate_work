@@ -17,10 +17,11 @@ from utils.jaeger_config import configure_jaeger_tracer
 
 app = FastAPI(
     title=base_settings.project_name,
-    docs_url="/api/movies/openapi",
-    openapi_url="/api/movies/openapi.json",
+    docs_url="/api/v1/movies/openapi",
+    openapi_url="/api/v1/movies/openapi.json",
     default_response_class=ORJSONResponse,
 )
+
 
 configure_jaeger_tracer(app, jaeger_settings.host, jaeger_settings.port)
 

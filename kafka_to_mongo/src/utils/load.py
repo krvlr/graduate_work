@@ -20,5 +20,5 @@ class MongoLoader(Loader):
 
     @backoff()
     def save_data(self, batch_transformer: Generator):
-        for collection, value in batch_transformer:
-            self.storage.update(collection=collection, value=value)
+        for collection, filters, value in batch_transformer:
+            self.storage.update(collection=collection, filters=filters, value=value)

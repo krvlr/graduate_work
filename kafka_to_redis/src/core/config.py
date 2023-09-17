@@ -13,7 +13,7 @@ class KafkaSettings(BaseConfig):
     timeout: str = Field(default="10", env="KAFKA_EXTRACT_TIMEOUT")
     group_id: str = Field(default="user_data", env="USER_DATA_KAFKA_GROUP_ID")
     auto_offset_reset: str = Field(default="smallest", env="KAFKA_AUTO_OFFSET_RESET")
-    movies_topic: str = Field(default="movies_views", env="MOVIES_TOPIC")
+    movies_topic: str = Field(default="movies_views", env="UGC_MOVIES_TOPIC")
     bookmarks_topic: str = Field(default="bookmarks", env="UGC_BOOKMARKS_TOPIC")
     ratings_topic: str = Field(default="ratings", env="UGC_RATINGS_TOPIC")
     reviews_topic: str = Field(default="reviews", env="UGC_REVIEWS_TOPIC")
@@ -32,6 +32,10 @@ class KafkaSettings(BaseConfig):
 class RedisSettings(BaseConfig):
     redis_host: str = Field(default="127.0.0.1", env="USER_DATA_REDIS_HOST")
     redis_port: str = Field(default="6379", env="USER_DATA_REDIS_PORT")
+    movie_key: str = Field(default="progress", env="USER_DATA_MOVIES_KEY")
+    bookmark_key: str = Field(default="bookmark", env="USER_DATA_BOOKMARKS_KEY")
+    rating_key: str = Field(default="rating", env="UGC_RATINGS_KEY")
+    review_key: str = Field(default="review", env="USER_DATA_REVIEWS_KEY")
 
 
 class LoggerSettings(BaseConfig):

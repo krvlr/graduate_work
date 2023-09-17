@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from uuid import UUID
 
@@ -6,10 +7,12 @@ from sqlalchemy import delete, insert, select, update
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
+logger = logging.getLogger(__name__)
+
 
 class IRepository(ABC):
     @abstractmethod
-    async def create(self, data: dict) -> UUID:
+    async def create(self, data: dict, **filter_by) -> UUID:
         raise NotImplementedError
 
     @abstractmethod
@@ -17,11 +20,11 @@ class IRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def update(self, id: UUID, data: dict) -> UUID:
+    async def update(self, data: dict, **filter_by) -> UUID:
         raise NotImplementedError
 
     @abstractmethod
-    async def delete(self, id: UUID) -> UUID:
+    async def delete(self, **filter_by) -> UUID:
         raise NotImplementedError
 
 
@@ -32,8 +35,10 @@ class SQLAlchemyRepository(IRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, data: dict) -> UUID:
-        model_info = await self.session.execute(select(self.model.id).filter_by(**data))  # type: ignore[attr-defined]
+    async def create(self, data: dict, **filter_by) -> UUID:
+        model_info = await self.session.execute(
+            select(self.model.id).filter_by(**filter_by)  # type: ignore[attr-defined]
+        )
 
         if model_info.all():
             raise HTTPException(
@@ -55,8 +60,10 @@ class SQLAlchemyRepository(IRepository):
                 detail=f"Ошибка при попытке получить детальную информацию. {self.name} не зарегистирован.",
             )
 
-    async def update(self, id: UUID, data: dict) -> UUID:
-        model_info = await self.session.execute(select(self.model.id).filter_by(**data))  # type: ignore[attr-defined]
+    async def update(self, data: dict, **filter_by) -> UUID:
+        model_info = await self.session.execute(
+            select(self.model.id).filter_by(**filter_by)  # type: ignore[attr-defined]
+        )
 
         if not model_info.all():
             raise HTTPException(
@@ -66,16 +73,16 @@ class SQLAlchemyRepository(IRepository):
 
         query = (
             update(self.model)
-            .where(self.model.id == id)  # type: ignore[attr-defined]
+            .filter_by(**filter_by)
             .values(**data)
             .returning(self.model.id)  # type: ignore[attr-defined]
         )
         result = await self.session.execute(query)
         return result.scalar_one()
 
-    async def delete(self, id: UUID) -> UUID:
+    async def delete(self, **filter_by) -> UUID:
         try:
-            query = delete(self.model).where(self.model.id == id).returning(self.model.id)  # type: ignore[attr-defined]
+            query = delete(self.model).filter_by(**filter_by).returning(self.model.id)  # type: ignore[attr-defined]
             result = await self.session.execute(query)
             return result.scalar_one()
         except NoResultFound:

@@ -210,6 +210,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - mongo_data:/data/db
     ports:
-      - "27017"
+      - "27017:27017"
     networks:
       - ugc_network
+      - recommendation_network

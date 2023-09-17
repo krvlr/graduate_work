@@ -39,7 +39,11 @@ async def film_list(
     )
 
 
-@router.get("/{film_id}", dependencies=[Depends(JWTBearerPremium())], response_model=FilmDetail)
+@router.get(
+    "/{film_id}",
+    # dependencies=[Depends(JWTBearerPremium())],
+    response_model=FilmDetail,
+)
 async def film_details(
     film_id: str, film_service: FilmService = Depends(get_film_service)
 ) -> FilmDetail:

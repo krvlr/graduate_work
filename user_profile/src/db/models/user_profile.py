@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from uuid import UUID, uuid4
 
 from db import Base
@@ -15,16 +15,16 @@ class UserProfile(Base):
     )
     created: Mapped[datetime] = mapped_column(
         comment="Время создания записи",
-        default=func.now(),
+        default=func.now() + timedelta(hours=3),
         nullable=False,
     )
     modified: Mapped[datetime] = mapped_column(
         comment="Время изменения записи",
-        default=func.now(),
-        onupdate=func.now(),
+        default=func.now() + timedelta(hours=3),
+        onupdate=func.now() + timedelta(hours=3),
         nullable=False,
     )
-    age: Mapped[date] = mapped_column(comment="Дата рождения пользователя")
+    age: Mapped[datetime] = mapped_column(comment="Дата рождения пользователя")
     first_name: Mapped[str] = mapped_column(comment="Имя пользователя")
     last_name: Mapped[str] = mapped_column(comment="Второе имя пользователя")
     country: Mapped[str] = mapped_column(comment="Страна пользователя")
@@ -76,18 +76,18 @@ class UserProfileGenre(Base):
     )
     created: Mapped[datetime] = mapped_column(
         comment="Время создания записи",
-        default=func.now(),
+        default=func.now() + timedelta(hours=3),
         nullable=False,
     )
     modified: Mapped[datetime] = mapped_column(
         comment="Время изменения записи",
-        default=func.now(),
-        onupdate=func.now(),
+        default=func.now() + timedelta(hours=3),
+        onupdate=func.now() + timedelta(hours=3),
         nullable=False,
     )
     user_id: Mapped[UUID] = mapped_column(
         ForeignKey("user_profile.id", ondelete="CASCADE"), comment="Идентификатор пользователя"
     )
-    genre_id: Mapped[UUID] = mapped_column(
+    genre_id: WriteOnlyMapped[UUID] = mapped_column(
         ForeignKey("genre.id", ondelete="CASCADE"), comment="Идентификатор жанра"
     )

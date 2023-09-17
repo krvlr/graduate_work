@@ -1,23 +1,18 @@
 import logging
+from functools import lru_cache
 from http import HTTPStatus
 
 import jwt
 from core.config import base_settings
 from fastapi import HTTPException, Request
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security import HTTPBearer
 from jwt import ExpiredSignatureError
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import ValidationError
 
 logger = logging.getLogger(__name__)
 
 
-class SubRequiredFields(BaseModel):
-    is_active: bool = Field(..., title="Активный пользователь")
-    is_admin: bool = Field(..., title="Администратор")
-    is_premium: bool = Field(..., title="Премиум пользователь")
-
-
-class JWTBearerPremium(HTTPBearer):
+class JWTBearerService(HTTPBearer):
     def __init__(self, auto_error: bool = True):
         super().__init__(auto_error=auto_error)
 
@@ -49,13 +44,17 @@ class JWTBearerPremium(HTTPBearer):
         if not self.is_authorized_account(decoded_token):
             raise HTTPException(status_code=HTTPStatus.FORBIDDEN, detail="Нет прав доступа")
 
-        return credentials.credentials
+        return decoded_token.get("sub", {}).get("id")
 
     @staticmethod
     def is_authorized_account(decoded_token: dict) -> bool:
         try:
-            sub = SubRequiredFields(**decoded_token.get("sub", {}))
-            return sub.is_active and (sub.is_admin or sub.is_premium)
+            return decoded_token.get("sub", {}).get("is_active")
         except ValidationError:
             logger.exception("Ошибка чтения payload JWT токена")
             return False
+
+
+@lru_cache()
+def get_jwt_bearer_service():
+    return JWTBearerService()

@@ -37,8 +37,8 @@ def main():
     )
 
     while True:
-        last_upload = state.get_state("last_upload", default=str(datetime.min))
         start_mark = str(datetime.now())
+        last_upload = state.get_state("last_upload", default=str(datetime.min))
 
         try:
             with contextlib.closing(get_conn_postgresql(**postgres_settings.get_dsn())) as pg_conn:

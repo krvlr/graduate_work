@@ -10,7 +10,7 @@ convention = {
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
     "pk": "pk_%(table_name)s",
 }
-async_engine = create_async_engine(postgres_settings.get_db_uri())
+async_engine = create_async_engine(postgres_settings.get_db_url())
 async_session_maker = async_sessionmaker(bind=async_engine)
 
 
