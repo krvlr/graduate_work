@@ -1,6 +1,7 @@
 from datetime import date
 from uuid import UUID
 
+from core.config import redis_settings
 from pydantic import BaseModel
 
 
@@ -14,7 +15,7 @@ class UserProfile(BaseModel):
     genres: list
 
     def get_key(self):
-        return f"{str(self.user_id)}:user_profile"
+        return f"{str(self.user_id)}:{redis_settings.user_profile_key}"
 
     def get_value(self):
         return {

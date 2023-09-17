@@ -1,6 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
+from core.config import redis_settings
 from pydantic import BaseModel, validator
 
 
@@ -11,7 +12,7 @@ class MovieProgress(BaseModel):
     created: datetime
 
     def get_key(self):
-        return f"{str(self.user_id)}:{str(self.movie_id)}:progress"
+        return f"{str(self.user_id)}:{str(self.movie_id)}:{redis_settings.movie_key}"
 
     def transform(self):
         return self.get_key(), self.progress
@@ -24,7 +25,7 @@ class MovieBookmark(BaseModel):
     created: datetime
 
     def get_key(self):
-        return f"{str(self.user_id)}:{str(self.movie_id)}:bookmark"
+        return f"{str(self.user_id)}:{str(self.movie_id)}:{redis_settings.bookmark_key}"
 
     def transform(self):
         return self.get_key(), self.action
@@ -39,7 +40,7 @@ class MovieReview(BaseModel):
     created: datetime
 
     def get_key(self):
-        return f"{str(self.user_id)}:{str(self.movie_id)}:review"
+        return f"{str(self.user_id)}:{str(self.movie_id)}:{redis_settings.review_key}"
 
     def transform(self):
         return self.get_key(), self.score
@@ -52,7 +53,7 @@ class MovieRating(BaseModel):
     created: datetime
 
     def get_key(self):
-        return f"{str(self.user_id)}:{str(self.movie_id)}:rating"
+        return f"{str(self.user_id)}:{str(self.movie_id)}:{redis_settings.rating_key}"
 
     def transform(self) -> tuple:
         return self.get_key(), self.rating

@@ -12,11 +12,18 @@ class MovieProgress(BaseModel):
     created: datetime
 
     def transform(self):
-        return mongo_settings.collection_progress, {
-            "user_id": str(self.user_id),
-            "movie_id": str(self.movie_id),
-            "progress": self.progress,
-        }
+        return (
+            mongo_settings.collection_progress,
+            {
+                "user_id": str(self.user_id),
+                "movie_id": str(self.movie_id),
+            },
+            {
+                "user_id": str(self.user_id),
+                "movie_id": str(self.movie_id),
+                "progress": self.progress,
+            },
+        )
 
 
 class MovieBookmark(BaseModel):
@@ -26,11 +33,18 @@ class MovieBookmark(BaseModel):
     created: datetime
 
     def transform(self):
-        return mongo_settings.collection_bookmark, {
-            "user_id": str(self.user_id),
-            "movie_id": str(self.movie_id),
-            "action": self.action,
-        }
+        return (
+            mongo_settings.collection_bookmark,
+            {
+                "user_id": str(self.user_id),
+                "movie_id": str(self.movie_id),
+            },
+            {
+                "user_id": str(self.user_id),
+                "movie_id": str(self.movie_id),
+                "action": self.action,
+            },
+        )
 
 
 class MovieReview(BaseModel):
@@ -42,11 +56,18 @@ class MovieReview(BaseModel):
     created: datetime
 
     def transform(self):
-        return mongo_settings.collection_review, {
-            "user_id": str(self.user_id),
-            "movie_id": str(self.movie_id),
-            "score": self.score,
-        }
+        return (
+            mongo_settings.collection_review,
+            {
+                "user_id": str(self.user_id),
+                "movie_id": str(self.movie_id),
+            },
+            {
+                "user_id": str(self.user_id),
+                "movie_id": str(self.movie_id),
+                "score": self.score,
+            },
+        )
 
 
 class MovieRating(BaseModel):
@@ -56,8 +77,15 @@ class MovieRating(BaseModel):
     created: datetime
 
     def transform(self):
-        return mongo_settings.collection_rating, {
-            "user_id": str(self.user_id),
-            "movie_id": str(self.movie_id),
-            "rating": self.rating,
-        }
+        return (
+            mongo_settings.collection_rating,
+            {
+                "user_id": str(self.user_id),
+                "movie_id": str(self.movie_id),
+            },
+            {
+                "user_id": str(self.user_id),
+                "movie_id": str(self.movie_id),
+                "rating": self.rating,
+            },
+        )

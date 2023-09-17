@@ -33,10 +33,10 @@ class PostgresSettings(BaseConfig):
     db_user: str = Field(default="admin", env="USER_PROFILE_DB_USER")
     db_password: str = Field(default="admin", env="USER_PROFILE_DB_PASSWORD")
 
-    def get_db_uri(self) -> str:
+    def get_db_url(self) -> str:
         return f"postgresql+asyncpg://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
 
-    def get_db_uri_alembic(self) -> str:
+    def get_db_url_alembic(self) -> str:
         return f"postgresql://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
 
 

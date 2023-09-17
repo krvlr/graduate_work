@@ -1,15 +1,15 @@
 """initial migration
 
-Revision ID: daa2a7708cca
+Revision ID: d026a352dce2
 Revises: 
-Create Date: 2023-09-09 23:50:48.856600
+Create Date: 2023-09-17 01:33:22.622273
 
 """
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "daa2a7708cca"
+revision = "d026a352dce2"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -30,7 +30,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Uuid(), nullable=False, comment="Идентификатор пользователя"),
         sa.Column("created", sa.DateTime(), nullable=False, comment="Время создания записи"),
         sa.Column("modified", sa.DateTime(), nullable=False, comment="Время изменения записи"),
-        sa.Column("age", sa.Date(), nullable=False, comment="Дата рождения пользователя"),
+        sa.Column("age", sa.DateTime(), nullable=False, comment="Дата рождения пользователя"),
         sa.Column("first_name", sa.String(), nullable=False, comment="Имя пользователя"),
         sa.Column("last_name", sa.String(), nullable=False, comment="Второе имя пользователя"),
         sa.Column("country", sa.String(), nullable=False, comment="Страна пользователя"),

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class StorageProvider(ABC):
     @abstractmethod
-    def update(self, collection: str, value: Any):
+    def update(self, collection: str, filters: dict, value: dict):
         pass
 
 
@@ -18,6 +18,8 @@ class StorageMongoProvider(StorageProvider):
         self.client = client
         self.db = self.client[db_name]
 
-    def update(self, collection: str, value: Any):
-        if not self.db[collection].find_one(value):
+    def update(self, collection: str, filters: dict, value: dict):
+        if self.db[collection].find_one(filters):
+            self.db[collection].update_one(filters, {"$set": value}, upsert=True)
+        else:
             self.db[collection].insert_one(value)

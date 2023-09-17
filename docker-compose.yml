@@ -221,10 +221,11 @@ services:
       - ./mongodb_scripts:/scripts
       - /etc/localtime:/etc/localtime:ro
       - mongo_data:/data/db
-    ports:
+    expose:
       - "27017"
     networks:
       - ugc_network
+      - recommendation_network
 
   jaeger:
     image: jaegertracing/all-in-one:1.20.0
@@ -280,9 +281,7 @@ services:
       - "6379"
 
   api-auth:
-    build:
-      context: flask_auth
-      dockerfile: Dockerfile
+    build: ./flask_auth
     container_name: api-auth
     restart: always
     depends_on:
@@ -357,9 +356,7 @@ services:
       - "9200"
 
   postgres_to_es:
-    build:
-      context: .
-      dockerfile: postgres_to_es/Dockerfile
+    build: ./postgres_to_es
     container_name: postgres_to_es
     restart: always
     depends_on:
@@ -375,9 +372,7 @@ services:
       - movies_network
 
   api-movies:
-    build:
-      context: ./fastapi_solution
-      dockerfile: Dockerfile
+    build: ./movies_api
     container_name: api-movies
     restart: always
     healthcheck:
@@ -400,9 +395,7 @@ services:
       - "8000"
 
   api-ugc:
-    build:
-      context: ./ugc
-      dockerfile: Dockerfile
+    build: ./ugc
     container_name: api-ugc
     restart: always
     healthcheck:
@@ -490,9 +483,7 @@ services:
       - "5432"
 
   api-user-profile:
-    build:
-      context: ./user_profile
-      dockerfile: Dockerfile
+    build: ./user_profile
     container_name: api-user-profile
     restart: always
     healthcheck:
@@ -507,6 +498,29 @@ services:
       - .env
     networks:
       - user_profile_network
+    expose:
+      - "8000"
+
+  api-user-recommendations:
+    build: ./user_recommendations
+    container_name: api-user-recommendations
+    restart: always
+    healthcheck:
+      test: "curl -H 'X-Request-Id: ${USER_RECOMMENDATIONS_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/recommendation/movies/health || exit 1"
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      redis-user-data:
+        condition: service_healthy
+      api-movies:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - user_profile_network
+      - recommendation_network
+      - movies_network
     expose:
       - "8000"
 

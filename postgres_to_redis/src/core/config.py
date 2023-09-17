@@ -31,6 +31,7 @@ class PostgresSettings(BaseConfig):
 class RedisSettings(BaseConfig):
     redis_host: str = Field(default="127.0.0.1", env="USER_DATA_REDIS_HOST")
     redis_port: str = Field(default="6379", env="USER_DATA_REDIS_PORT")
+    user_profile_key: str = Field(default="user_profile", env="USER_DATA_USER_PROFILE_KEY")
 
 
 class LoggerSettings(BaseConfig):

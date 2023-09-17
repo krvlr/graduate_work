@@ -6,13 +6,6 @@ logger = logging.getLogger(__name__)
 
 
 def backoff(start_sleep_time=0.1, factor=2, border_sleep_time=10):
-    """
-    Функция для повторного выполнения функции
-    через некоторое время, если возникла ошибка.
-    Использует наивный экспоненциальный рост времени повтора
-    до граничного времени ожидания.
-    """
-
     def wrapper(func):
         @wraps(func)
         def inner(*args, **kwargs):
