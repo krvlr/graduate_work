@@ -1,8 +1,11 @@
+import logging
 from functools import lru_cache
 from uuid import UUID
 
 from models.user_profile import UserProfileRegisterSchemaRequest
 from utils.unitofwork import IUnitOfWork
+
+logger = logging.getLogger(__name__)
 
 
 class UserProfileService:
@@ -19,10 +22,12 @@ class UserProfileService:
                 genre = await unit_of_work.genre.read(name=user_preference.name)
                 genre_id = genre.genre_id
             except Exception:
-                genre_id = await unit_of_work.genre.create(data=user_preference.dict())
+                genre_id = await unit_of_work.genre.create(
+                    data=user_preference.dict(), name=user_preference.name
+                )
 
             await unit_of_work.user_profile_genre.create(
-                data={"user_id": user_id, "genre_id": genre_id}
+                data={"user_id": user_id, "genre_id": genre_id}, user_id=user_id, genre_id=genre_id
             )
             await unit_of_work.commit()
         return user_id, genre_id
@@ -36,7 +41,7 @@ class UserProfileService:
         user_info = {"id": user_id} | user_profile.dict()
 
         async with unit_of_work:
-            user_id = await unit_of_work.user_profile.create(data=user_info)
+            user_id = await unit_of_work.user_profile.create(data=user_info, id=user_id)
             await unit_of_work.commit()
         return user_id
 
@@ -58,7 +63,7 @@ class UserProfileService:
         user = user_profile.dict()
 
         async with unit_of_work:
-            user_id = await unit_of_work.user_profile.update(id=user_id, data=user)
+            user_id = await unit_of_work.user_profile.update(data=user, id=user_id)
             await unit_of_work.commit()
         return user_id
 

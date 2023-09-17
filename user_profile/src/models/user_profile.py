@@ -1,7 +1,7 @@
-from datetime import date, datetime
+from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 
 class UserProfileRegisterSchemaRequest(BaseModel):
@@ -9,7 +9,11 @@ class UserProfileRegisterSchemaRequest(BaseModel):
     last_name: str
     country: str
     city: str
-    age: date
+    age: datetime
+
+    @validator("age")
+    def validate_age(cls, value):
+        return value.replace(tzinfo=None)
 
 
 class UserProfileRegisterSchemaResponse(BaseModel):
@@ -24,7 +28,11 @@ class UserProfileSchema(BaseModel):
     last_name: str
     country: str
     city: str
-    age: date
+    age: datetime
+
+    @validator("age")
+    def validate_age(cls, value):
+        return value.replace(tzinfo=None)
 
 
 class UserProfileUpdateSchemaRequest(BaseModel):
@@ -32,27 +40,30 @@ class UserProfileUpdateSchemaRequest(BaseModel):
     last_name: str
     country: str
     city: str
-    age: date
+    age: datetime
+
+    @validator("age")
+    def validate_age(cls, value):
+        return value.replace(tzinfo=None)
 
 
 class UserProfileUpdateSchemaResponse(BaseModel):
     user_id: UUID
 
 
-class GenreSchema(BaseModel):
-    genre_id: UUID
-    name: str
-
-
-class GenreSchemaRequest(BaseModel):
-    genre_id: UUID
-    name: str
-
-
-class GenreSchemaResponse(BaseModel):
-    genre_id: UUID
+class UserProfileDeleteSchemaResponse(BaseModel):
     user_id: UUID
 
 
 class UserGenreRegisterSchemaRequest(BaseModel):
+    name: str
+
+
+class UserGenreRegisterSchemaResponse(BaseModel):
+    genre_id: UUID
+    user_id: UUID
+
+
+class GenreSchema(BaseModel):
+    genre_id: UUID
     name: str

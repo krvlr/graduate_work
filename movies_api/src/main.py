@@ -22,6 +22,7 @@ app = FastAPI(
     default_response_class=ORJSONResponse,
 )
 
+
 configure_jaeger_tracer(app, jaeger_settings.host, jaeger_settings.port)
 
 

@@ -5,6 +5,8 @@ from fastapi import APIRouter, Depends, status
 from fastapi.security import HTTPBearer
 from models.user_profile import (
     UserGenreRegisterSchemaRequest,
+    UserGenreRegisterSchemaResponse,
+    UserProfileDeleteSchemaResponse,
     UserProfileRegisterSchemaRequest,
     UserProfileRegisterSchemaResponse,
     UserProfileSchema,
@@ -21,7 +23,11 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-@router.post("/register_user_genre", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register_user_genre",
+    status_code=status.HTTP_201_CREATED,
+    response_model=UserGenreRegisterSchemaResponse,
+)
 async def register_user_genre(
     user_preference: UserGenreRegisterSchemaRequest,
     unit_of_work: Annotated[IUnitOfWork, Depends(UnitOfWork)],
@@ -80,7 +86,11 @@ async def user_profile_details(
     return user_info
 
 
-@router.delete("/delete_user_profile", status_code=status.HTTP_200_OK)
+@router.delete(
+    "/delete_user_profile",
+    status_code=status.HTTP_200_OK,
+    response_model=UserProfileDeleteSchemaResponse,
+)
 async def updated_user_profile(
     unit_of_work: Annotated[IUnitOfWork, Depends(UnitOfWork)],
     user_profile_service: Annotated[UserProfileService, Depends(get_user_profile_service)],

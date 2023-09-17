@@ -26,5 +26,5 @@ class DataTransformer(Transformer):
 
     def get_batch_transformer(self, batch_extractor: Generator):
         for topic, event in batch_extractor:
-            collection, transform_event = self.transform(topic=topic, event=event)
-            yield collection, transform_event
+            collection, filters, transform_event = self.transform(topic=topic, event=event)
+            yield collection, filters, transform_event

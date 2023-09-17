@@ -10,6 +10,6 @@ SELECT
 FROM user_profile up
 LEFT JOIN user_profile_genre upg on upg.user_id = up.id
 LEFT JOIN genre g on g.id = upg.genre_id
-WHERE least(up.modified, upg.modified) > '{}'
-GROUP BY up.id;
+GROUP BY up.id
+HAVING GREATEST(up.modified, MAX(upg.modified)) > '{}';
 """

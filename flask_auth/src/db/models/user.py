@@ -1,4 +1,5 @@
 import uuid
+from datetime import timedelta
 
 from db import alchemy
 from flask_bcrypt import check_password_hash, generate_password_hash
@@ -20,13 +21,13 @@ class User(alchemy.Model):
     created = Column(
         DateTime,
         nullable=False,
-        default=func.now(),
+        default=func.now() + timedelta(hours=3),
         comment="Время создания записи",
     )
     modified = Column(
         DateTime,
-        default=func.now(),
-        onupdate=func.now(),
+        default=func.now() + timedelta(hours=3),
+        onupdate=func.now() + timedelta(hours=3),
         nullable=True,
         comment="Время изменения записи",
     )
@@ -146,7 +147,7 @@ class UserActionsHistory(alchemy.Model):
         DateTime,
         primary_key=True,
         nullable=False,
-        default=func.now(),
+        default=func.now() + timedelta(hours=3),
         comment="Время создания записи",
     )
 

@@ -7,7 +7,7 @@ class BaseConfig(BaseSettings):
 
 
 class BaseSettings(BaseConfig):
-    project_name: str = Field(default="movies", env="UGC_PROJECT_NAME")
+    project_name: str = Field(default="ugc", env="UGC_PROJECT_NAME")
     secret_key: str = Field(default="SUPER-SECRET-KEY", repr=False, env="JWT_SECRET_KEY")
 
 
