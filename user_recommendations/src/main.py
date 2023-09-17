@@ -23,8 +23,8 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title=base_settings.project_name,
-    docs_url="/api/recommendation/movies/openapi",
-    openapi_url="/api/recommendation/movies/openapi.json",
+    docs_url="/api/v1/recommendation/movies/openapi",
+    openapi_url="/api/v1/recommendation/movies/openapi.json",
     default_response_class=ORJSONResponse,
 )
 

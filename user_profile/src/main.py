@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title=base_settings.project_name,
-    docs_url="/api/user_profile/openapi",
-    openapi_url="/api/user_profile/openapi.json",
+    docs_url="/api/v1/user_profile/openapi",
+    openapi_url="/api/v1/user_profile/openapi.json",
     default_response_class=ORJSONResponse,
 )
 
