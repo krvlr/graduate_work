@@ -574,6 +574,38 @@ services:
     expose:
       - "8000"
 
+  api-movies-preprocessor:
+    build: ./movies_preprocessor
+    container_name: api-movies-preprocessor
+    restart: always
+    healthcheck:
+      test: "curl -H 'X-Request-Id: ${MOVIES_PREPROCESSOR_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/movies_preprocessor/health || exit 1"
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    env_file:
+      - .env
+    networks:
+      - recommendation_network
+    expose:
+      - "8000"
+
+  api-similar-movies:
+    build: ./similar_movies
+    container_name: api-similar-movies
+    restart: always
+    healthcheck:
+      test: "curl -H 'X-Request-Id: ${SIMILAR_MOVIES_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/similar_movies/health || exit 1"
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    env_file:
+      - .env
+    networks:
+      - recommendation_network
+    expose:
+      - "8000"
+
   nginx:
     image: nginx:1.23.1-alpine
     container_name: nginx-movies

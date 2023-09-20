@@ -80,7 +80,7 @@ class MovieRating(BaseModel):
     @validator("rating")
     @classmethod
     def validate_rating(cls, value):
-        if value > 10:
+        if value > 10 or value < 0:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="Ошибка валидации. Рейтинг не может быть больше 10.",
