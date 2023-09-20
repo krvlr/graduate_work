@@ -55,7 +55,7 @@ class RecommendationService:
     @custom_sample(size=base_settings.user_recommendation_size)
     async def get_general_recommendations(self, user_id: UUID) -> list[GeneralMovieSchemaResponse]:
         user_profile = await self.user_data_provider.get(user_id=user_id)
-        preference_genres = user_profile["genres"]
+        preference_genres = user_profile["genres"] if user_profile else []
 
         general_recommendations = self.general_recommendations_provider.get(preference_genres)
 
