@@ -23,12 +23,14 @@ MOVIES_INDEX = {
                 }
             },
         },
+        "max_result_window": 1_000_000,
     },
     "mappings": {
         "dynamic": "strict",
         "properties": {
             "id": {"type": "keyword"},
             "imdb_rating": {"type": "float"},
+            "creation_date": {"type": "date"},
             "genres": {
                 "type": "nested",
                 "dynamic": "strict",

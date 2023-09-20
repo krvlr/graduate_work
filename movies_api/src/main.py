@@ -1,4 +1,9 @@
 import uvicorn
+from elasticsearch import AsyncElasticsearch
+from fastapi import FastAPI
+from fastapi.responses import ORJSONResponse
+from redis.asyncio import Redis
+
 from api.v1 import core, films, genres, persons
 from core.config import (
     base_settings,
@@ -9,10 +14,6 @@ from core.config import (
 )
 from core.logger import LOGGER_CONFIG
 from db import elastic, redis
-from elasticsearch import AsyncElasticsearch
-from fastapi import FastAPI
-from fastapi.responses import ORJSONResponse
-from redis.asyncio import Redis
 from utils.jaeger_config import configure_jaeger_tracer
 
 app = FastAPI(

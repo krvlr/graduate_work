@@ -1,1 +1,0 @@
-docker-compose exec mongo sh -c "mongosh < /scripts/init_mongo.js"

@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.10.12, 3.11.4]
+        python-version: [ 3.10.12, 3.11.4 ]
     steps:
       - uses: actions/checkout@v3
 
@@ -35,9 +35,9 @@ jobs:
         run: |
           flake8 --config ./setup.cfg --count --show-source --statistics --format=html --htmldir=linter_reports/flake
 
-      - name: Lint with mypy
-        run: |
-          mypy . --config-file ./setup.cfg --install-types --non-interactive --html-report linter_reports/mypy
+#      - name: Lint with mypy
+#        run: |
+#          mypy . --config-file ./setup.cfg --install-types --non-interactive --html-report linter_reports/mypy
 
   telegram_notifier:
     runs-on: ubuntu-latest

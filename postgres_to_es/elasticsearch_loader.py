@@ -21,7 +21,7 @@ class ElasticsearchLoader:
             ignore=HTTPStatus.BAD_REQUEST,
             body=index_params,
         )
-        logger.debug("Индекс %s создан", index_name)
+        logger.debug(f"Индекс {index_name} создан")
 
     @backoff()
     def load_data(self, index_name: str, index_params: dict, data: list[BaseModel]) -> None:

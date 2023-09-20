@@ -41,6 +41,7 @@ services:
     ports:
       - "9092:9092"
       - "9101:9101"
+      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper_kafka:2181'
@@ -215,16 +216,26 @@ services:
       - ugc_network
 
   mongo:
-    container_name: mongo
     image: mongo
+    container_name: mongo
+    restart: always
     volumes:
       - ./mongodb_scripts:/scripts
+      - ./mongodb_scripts/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
       - /etc/localtime:/etc/localtime:ro
       - mongo_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok'
+      interval: 10s
+      timeout: 10s
+      retries: 3
     expose:
       - "27017"
+    ports: # TODO remove
+      - "27017:27017"
     networks:
       - ugc_network
+      - user_profile_network
       - recommendation_network
 
   jaeger:
@@ -321,6 +332,8 @@ services:
       retries: 5
     expose:
       - "5432"
+    ports: # TODO remove
+      - "5432:5432"
 
   redis-movies:
     image: redis:7.0.8-alpine
@@ -354,6 +367,8 @@ services:
       retries: 5
     expose:
       - "9200"
+    ports: # TODO remove
+      - "9200:9200"
 
   postgres_to_es:
     build: ./postgres_to_es
@@ -524,6 +539,42 @@ services:
     expose:
       - "8000"
 
+  general-data-aggregator:
+    build: ./general_data_aggregator
+    container_name: general-data-aggregator
+    restart: always
+    depends_on:
+      elasticsearch-movies:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - movies_network
+      - ugc_network
+      - recommendation_network
+
+  api-general-recommendations:
+    build: ./general_recommendations
+    container_name: api-general-recommendations
+    restart: always
+    depends_on:
+      general-data-aggregator:
+        condition: service_started
+    healthcheck:
+      test: "curl -H 'X-Request-Id: ${USER_RECOMMENDATIONS_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/health || exit 1"
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    env_file:
+      - .env
+    networks:
+      - ugc_network
+      - recommendation_network
+    expose:
+      - "8000"
+
   nginx:
     image: nginx:1.23.1-alpine
     container_name: nginx-movies
@@ -540,6 +591,10 @@ services:
       api-user-profile:
         condition: service_healthy
       api-ugc:
+        condition: service_healthy
+      api-user-recommendations:
+        condition: service_healthy
+      api-general-recommendations:
         condition: service_healthy
     networks:
       - movies_network
