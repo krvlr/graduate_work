@@ -29,6 +29,7 @@ services:
     ports:
       - "9092:9092"
       - "9101:9101"
+      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper_kafka:2181'
@@ -203,13 +204,22 @@ services:
       - ugc_network
 
   mongo:
-    container_name: mongo
     image: mongo
+    container_name: mongo
+    restart: always
     volumes:
       - ./mongodb_scripts:/scripts
+      - ./mongodb_scripts/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
       - /etc/localtime:/etc/localtime:ro
       - mongo_data:/data/db
-    ports:
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok'
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    expose:
+      - "27017"
+    ports: # TODO remove
       - "27017:27017"
     networks:
       - ugc_network

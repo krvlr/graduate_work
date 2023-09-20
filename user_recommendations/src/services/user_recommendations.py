@@ -57,15 +57,15 @@ class RecommendationService:
         user_profile = await self.user_data_provider.get(user_id=user_id)
         preference_genres = user_profile["genres"] if user_profile else []
 
-        general_recommendations = self.general_recommendations_provider.get(preference_genres)
+        general_recommendations = await self.general_recommendations_provider.get(preference_genres)
 
-        return [GeneralMovieSchemaResponse(**movie) for movie in await general_recommendations]
+        return [GeneralMovieSchemaResponse(**movie) for movie in general_recommendations]
 
     @backoff()
     async def get_movies_details(self, movies: list[UUID]):
         movies_details = []
 
-        ratings = self.general_recommendations_provider.get_ratings(
+        ratings = await self.general_recommendations_provider.get_ratings(
             [str(movie_id) for movie_id in movies]
         )
 
@@ -103,6 +103,8 @@ class RecommendationService:
                 recommendations = self.convert_general_recommendations(
                     await self.get_general_recommendations(user_id=user_id)
                 )
+            else:
+                logger.info(f"Возвращаем персональные рекомендации для пользователя с id={user_id}")
             return recommendations
         except Exception:
             logger.exception(

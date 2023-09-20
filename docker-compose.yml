@@ -235,7 +235,6 @@ services:
       - "27017:27017"
     networks:
       - ugc_network
-      - user_profile_network
       - recommendation_network
 
   jaeger:
