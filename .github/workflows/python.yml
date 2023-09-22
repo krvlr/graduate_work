@@ -35,9 +35,9 @@ jobs:
         run: |
           flake8 --config ./setup.cfg --count --show-source --statistics --format=html --htmldir=linter_reports/flake
 
-#      - name: Lint with mypy
-#        run: |
-#          mypy . --config-file ./setup.cfg --install-types --non-interactive --html-report linter_reports/mypy
+      - name: Lint with mypy
+        run: |
+          mypy . --config-file ./setup.cfg --install-types --non-interactive --html-report linter_reports/mypy
 
   telegram_notifier:
     runs-on: ubuntu-latest

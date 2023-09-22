@@ -231,8 +231,6 @@ services:
       retries: 3
     expose:
       - "27017"
-    ports: # TODO remove
-      - "27017:27017"
     networks:
       - ugc_network
       - recommendation_network
@@ -331,8 +329,6 @@ services:
       retries: 5
     expose:
       - "5432"
-    ports: # TODO remove
-      - "5432:5432"
 
   redis-movies:
     image: redis:7.0.8-alpine
@@ -366,8 +362,6 @@ services:
       retries: 5
     expose:
       - "9200"
-    ports: # TODO remove
-      - "9200:9200"
 
   postgres_to_es:
     build: ./postgres_to_es
@@ -605,6 +599,25 @@ services:
       - recommendation_network
     expose:
       - "8000"
+
+  scheduler-similar-movies:
+    build: ./similar_movies_scheduler
+    container_name: scheduler-similar-movies
+    restart: always
+    depends_on:
+      elasticsearch-movies:
+        condition: service_healthy
+      api-similar-movies:
+        condition: service_healthy
+      api-movies-preprocessor:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - movies_network
+      - recommendation_network
 
   nginx:
     image: nginx:1.23.1-alpine
