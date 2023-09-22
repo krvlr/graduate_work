@@ -47,7 +47,9 @@ class MongoSettings(BaseConfig):
 class MovieSettings(BaseConfig):
     host: str = Field(default="localhost", env="MOVIES_API_HOST")
     port: str = Field(default="8002", env="MOVIES_API_PORT")
-    movie_detail_path: str = Field(default="api/v1/movies/films", env="MOVIES_API_DETAILS_FILMS_PATH")
+    movie_detail_path: str = Field(
+        default="api/v1/movies/films", env="MOVIES_API_DETAILS_FILMS_PATH"
+    )
 
     def get_url(self):
         return f"http://{self.host}:{self.port}/{self.movie_detail_path}"
@@ -64,11 +66,11 @@ class GeneralRecommendationsSettings(BaseConfig):
     port: str = Field(default="8003", env="GENERAL_RECOMMENDATIONS_API_PORT")
     replacement_path: str = Field(
         default="api/v1/general_recommendations/movies/replacement",
-        env="GENERAL_RECOMMENDATIONS_REPLACEMENT_PATH"
+        env="GENERAL_RECOMMENDATIONS_REPLACEMENT_PATH",
     )
     ratings_path: str = Field(
         default="api/v1/general_recommendations/movies/ratings",
-        env="GENERAL_RECOMMENDATIONS_RATINGS_PATH"
+        env="GENERAL_RECOMMENDATIONS_RATINGS_PATH",
     )
 
     def get_replacement_url(self):

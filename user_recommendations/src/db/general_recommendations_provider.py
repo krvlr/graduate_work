@@ -34,7 +34,7 @@ class GeneralRecommendationsProvider(IGeneralRecommendationsProvider):
                     return json.loads(text)
 
     async def get_ratings(self, movies_ids: list[str]):
-        movies_ids = "movies_ids=" + "&movies_ids=".join(movies_ids)
+        movies_ids = "movies_ids=" + "&movies_ids=".join(movies_ids)  # type: str
         async with aiohttp.ClientSession() as session:
             async with session.get(
                 general_recommendations_settings.get_rating_url() + f"?{movies_ids}"
