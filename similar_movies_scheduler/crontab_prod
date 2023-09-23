@@ -1,0 +1,1 @@
+0 3 * * * python /opt/app/src/main.py >> /logfile
