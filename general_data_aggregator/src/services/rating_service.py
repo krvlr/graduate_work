@@ -10,8 +10,8 @@ class RatingService:
     @staticmethod
     async def get_avg_ratings_of_movie(movie_id: str) -> float | None:
         pipeline = [
-            {"$match": {"film_id": movie_id}},
-            {"$group": {"_id": "@film_id", "avg_score": {"$avg": "$rating_score"}}},
+            {"$match": {"movie_id": movie_id}},
+            {"$group": {"_id": "@movie_id", "avg_score": {"$avg": "$rating"}}},
         ]
         return await get_source_mongodb_adapter().avg(
             sources_mongodb_settings.collection_rating, pipeline

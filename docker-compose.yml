@@ -221,6 +221,7 @@ services:
     restart: always
     volumes:
       - ./mongodb_scripts:/scripts
+      - ./db_dumps/ugc_database.gz:/scripts/ugc_database.gz  # for test
       - ./mongodb_scripts/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
       - /etc/localtime:/etc/localtime:ro
       - mongo_data:/data/db
@@ -265,6 +266,7 @@ services:
       POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD}
     volumes:
       - auth_postgres_data:/var/lib/postgresql/data/
+      - ./db_dumps/auth_database.sql:/docker-entrypoint-initdb.d/auth_database.sql  # for test
     networks:
       - auth_network
     healthcheck:
@@ -319,7 +321,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_movies_data:/var/lib/postgresql/data/
-      - ./movies_db/movies_database.sql:/docker-entrypoint-initdb.d/movies_database.sql
+      - ./db_dumps/movies_database.sql:/docker-entrypoint-initdb.d/movies_database.sql
     networks:
       - movies_network
     healthcheck:
@@ -424,6 +426,7 @@ services:
     restart: always
     volumes:
       - user_data_redis:/data
+      - ./db_dumps/redis_user_database.rdb:/data/dump.rdb  #  for test
     networks:
       - recommendation_network
     healthcheck:
@@ -480,6 +483,7 @@ services:
       POSTGRES_PASSWORD: ${USER_PROFILE_DB_PASSWORD}
     volumes:
       - user_profile_postgres_data:/var/lib/postgresql/data/
+      - ./db_dumps/user_profile_database.sql:/docker-entrypoint-initdb.d/user_profile_database.sql  # for test
     networks:
       - user_profile_network
     healthcheck:

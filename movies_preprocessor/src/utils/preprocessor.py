@@ -63,7 +63,8 @@ class NltkPreprocessor(IPreprocessor):
             lemmas = [
                 self.lemmatizer.lemmatize(tok)
                 for tok in text.split()
-                if tok not in self.stopwords and self.lemmatizer.lemmatize(tok) not in self.stopwords
+                if tok not in self.stopwords
+                and self.lemmatizer.lemmatize(tok) not in self.stopwords
             ]
             text = " ".join(self.phrases[lemmas])
             return text
