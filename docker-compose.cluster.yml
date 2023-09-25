@@ -219,8 +219,6 @@ services:
       retries: 3
     expose:
       - "27017"
-    ports: # TODO remove
-      - "27017:27017"
     networks:
       - ugc_network
       - recommendation_network
