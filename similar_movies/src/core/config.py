@@ -7,7 +7,7 @@ class BaseConfig(BaseSettings):
 
 
 class BaseSettings(BaseConfig):
-    project_name: str = Field(default="preprocessor", env="SIMILAR_MOVIES_PROJECT_NAME")
+    project_name: str = Field(default="similar_movies", env="SIMILAR_MOVIES_PROJECT_NAME")
 
 
 class JaegerSettings(BaseConfig):

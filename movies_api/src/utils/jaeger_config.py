@@ -13,7 +13,7 @@ def configure_jaeger_tracer(app: FastAPI, host: str, port: int) -> None:
         return
 
     trace.set_tracer_provider(
-        TracerProvider(resource=Resource.create({SERVICE_NAME: "Elastic API"}))
+        TracerProvider(resource=Resource.create({SERVICE_NAME: "Movies API"}))
     )
     trace.get_tracer_provider().add_span_processor(  # type: ignore
         BatchSpanProcessor(

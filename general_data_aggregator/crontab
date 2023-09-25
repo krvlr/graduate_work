@@ -1,1 +1,1 @@
-* * * * * python /opt/app/src/main.py >> /logfile
+*/3 * * * * python /opt/app/src/main.py >> /logfile

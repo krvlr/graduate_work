@@ -12,9 +12,7 @@ def configure_jaeger_tracer(app: FastAPI, host: str, port: int) -> None:
     if not jaeger_settings.enable_tracer:
         return
 
-    trace.set_tracer_provider(
-        TracerProvider(resource=Resource.create({SERVICE_NAME: "Elastic API"}))
-    )
+    trace.set_tracer_provider(TracerProvider(resource=Resource.create({SERVICE_NAME: "UGC API"})))
     trace.get_tracer_provider().add_span_processor(  # type: ignore
         BatchSpanProcessor(
             JaegerExporter(
