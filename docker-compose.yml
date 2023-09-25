@@ -623,6 +623,38 @@ services:
       - movies_network
       - recommendation_network
 
+  api-personal-recommendations:
+    build: ./personal_recommendations
+    container_name: api-personal-recommendations
+    restart: always
+    healthcheck:
+      test: "curl -H 'X-Request-Id: ${PERSONAL_RECOMMENDATIONS_HEALTHCHECK_REQUEST_ID}' --fail http://127.0.0.1:8000/api/v1/personal_recommendations/health || exit 1"
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    env_file:
+      - .env
+    networks:
+      - recommendation_network
+    expose:
+      - "8000"
+
+  scheduler-personal-recommendations:
+    build: ./personal_recommendations_scheduler
+    container_name: scheduler-personal-recommendations
+    restart: always
+    depends_on:
+      api-personal-recommendations:
+        condition: service_healthy
+      redis-user-data:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - recommendation_network
+
   nginx:
     image: nginx:1.23.1-alpine
     container_name: nginx-movies
