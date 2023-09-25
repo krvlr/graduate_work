@@ -252,6 +252,7 @@ services:
       - auth_network
       - ugc_network
       - user_profile_network
+      - recommendation_network
     ports:
       - "6831:6831/udp"
       - "16686:16686"
