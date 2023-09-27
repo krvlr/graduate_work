@@ -24,7 +24,7 @@ class LoggerSettings(BaseConfig):
 class JaegerSettings(BaseConfig):
     enable_tracer: bool = Field(default=True, env="ENABLE_TRACER")
     host: str = Field(default="127.0.0.1", env="JAEGER_HOST")
-    port: str = Field(default="6831", env="JAEGER_PORT")
+    port: int = Field(default="6831", env="JAEGER_PORT")
 
 
 class MongoSettings(BaseConfig):
